@@ -4,16 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using System.Collections.Concurrent;
 
 namespace Unterrichtsbewertungstool
 {
     public class ServerData
     {
-        public Dictionary<IPAddress, ClientData> clientDatas { get; private set; }
+        public ConcurrentDictionary<IPAddress, ClientData> serverData { get; private set; }
 
         public ServerData()
         {
-            clientDatas = new Dictionary<IPAddress, ClientData>();
+            serverData = new ConcurrentDictionary<IPAddress, ClientData>();
+        }
+
+        public void addData(IPAddress address, ClientData data)
+        {
+            serverData.TryAdd(address, data);
         }
     }
 

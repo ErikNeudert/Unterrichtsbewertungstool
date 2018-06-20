@@ -14,18 +14,15 @@ namespace Unterrichtsbewertungstool
 {
     public class Server : NetworkComponent
     {
-        private BlockingCollection<Action> work;
+        //private BlockingCollection<Action> work = new BlockingCollection<Action>();
         private IPAddress address;
         private Boolean isRunning;
         private Thread listenerThread;
         private Thread workerThread;
         private TcpListener tcpListener;
-        private ConcurrentDictionary<IPAddress, ClientData> clientDatas;
+        private ServerData serverData = new ServerData();
 
-        public Server(String serverAdress, int port) : this(IPAddress.Parse(serverAdress), port)
-        {
-
-        }
+        public Server(String serverAdress, int port) : this(IPAddress.Parse(serverAdress), port) { }
 
         /*
          * TODO:
@@ -35,8 +32,6 @@ namespace Unterrichtsbewertungstool
         public Server(IPAddress serverAddress, int port)
         {
             //initialize
-            work = new BlockingCollection<Action>();
-            clientDatas = new ConcurrentDictionary<IPAddress, ClientData>();
             //set variables
             address = serverAddress;
             isRunning = true;
@@ -47,21 +42,20 @@ namespace Unterrichtsbewertungstool
         {
             Debug.WriteLine("Start listeners");
             //start listeners
-            listenerThread = startListeners(tcpListener);
+            listenerThread = getListener(tcpListener);
             listenerThread.Start();
             //start Workers
-            workerThread = startWorkers(work);
-            workerThread.Start();
         }
 
         public void stop()
         {
+            isRunning = false;
             listenerThread.Join(1000);
             workerThread.Join(1000);
             tcpListener.Stop();
         }
 
-        private Thread startListeners(TcpListener listener)
+        private Thread getListener(TcpListener listener)
         {
             return new Thread(() =>
                 {
@@ -79,24 +73,24 @@ namespace Unterrichtsbewertungstool
             );
         }
 
-        private Thread startWorkers(BlockingCollection<Action> queue)
-        {
-            return new Thread(() =>
-            {
-                while (isRunning)
-                {
-                    Debug.WriteLine("Waiting on queue");
+        //private Thread startWorkers(BlockingCollection<Action> queue)
+        //{
+        //    return new Thread(() =>
+        //    {
+        //        while (isRunning)
+        //        {
+        //            Debug.WriteLine("Waiting on queue");
 
-                    Action action = queue.Take();
+        //            Action action = queue.Take();
 
-                    Debug.WriteLine("Assigning action to worker: " + action);
+        //            Debug.WriteLine("Assigning action to worker: " + action);
 
-                    WaitCallback actionCallback = action.GetActionCallback();
-                    ThreadPool.QueueUserWorkItem(actionCallback, action);
-                }
-            }
-            );
-        }
+        //            WaitCallback actionCallback = action.GetActionCallback();
+        //            ThreadPool.QueueUserWorkItem(actionCallback, action);
+        //        }
+        //    }
+        //    );
+        //}
 
         private void listen(object clientObject)
         {
@@ -105,15 +99,18 @@ namespace Unterrichtsbewertungstool
 
             if(stream.CanRead && stream.DataAvailable)
             {
-                WaitCallback actionCallback = getActionToTake(stream);
-                Object dataObject = receive(stream);
-                Action action = new Action(actionCallback, client, dataObject);
+                TransferObject receivedObj = receive(stream);
+                WaitCallback actionCallback = getActionMethod(receivedObj.action);
+                
+                //status
+                Action action = new Action(client, receivedObj.data);
 
                 Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
-                work.Add(action);
+                ThreadPool.QueueUserWorkItem(actionCallback, action);
             }
             else
             {
+                client.Close();
                 return;
             }
         }
@@ -127,17 +124,14 @@ namespace Unterrichtsbewertungstool
          * Should probably return the actual action like do stuff to the data, send the data etc
          * 
          */
-        private WaitCallback getActionToTake(NetworkStream stream)
+        private WaitCallback getActionMethod(ExecutableActions actionToTake)
         {
-            byte actionByte = (byte) stream.ReadByte();
-            ExecutableActions actionToTake = (ExecutableActions) actionByte;
-
             switch (actionToTake)
             {
-                case ExecutableActions.SEND_DATA:
+                case ExecutableActions.SEND:
                     Debug.WriteLine("Send");
                     return sendData;
-                case ExecutableActions.RECEIVE_DATA:
+                case ExecutableActions.REQUEST:
                     Debug.WriteLine("Receive");
                     return receiveData;
                 default:
@@ -153,9 +147,11 @@ namespace Unterrichtsbewertungstool
         {
             Action action = (Action) state;
             TcpClient client = action.getClient();
-            //append data of all clients
+            NetworkStream stream = client.GetStream();
+            //some clients might get more information than others (switch on client ip...)
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData);
 
-            send(client.GetStream(), clientDatas);
+            send(stream, sendObj);
         }
 
         private void receiveData(object state)
@@ -169,7 +165,7 @@ namespace Unterrichtsbewertungstool
 
             if (dataObject is ClientData)
             {
-                clientDatas.TryAdd(IPAddress.Parse("1.1.1.1"), (ClientData) dataObject);
+                serverData.addData(IPAddress.Parse("1.1.1.1"), (ClientData) dataObject);
             }
             else
             {
@@ -180,12 +176,10 @@ namespace Unterrichtsbewertungstool
         public class Action
         {
             TcpClient client;
-            WaitCallback actionCallback;
             object dataObject;
 
-            public Action(WaitCallback action, TcpClient client, object dataObject)
+            public Action(TcpClient client, object dataObject)
             {
-                this.actionCallback = action;
                 this.client = client;
                 this.dataObject = dataObject;
             }
@@ -193,11 +187,6 @@ namespace Unterrichtsbewertungstool
             public TcpClient getClient()
             {
                 return client;
-            }
-
-            public WaitCallback GetActionCallback()
-            {
-                return actionCallback;
             }
 
             public object getData()
