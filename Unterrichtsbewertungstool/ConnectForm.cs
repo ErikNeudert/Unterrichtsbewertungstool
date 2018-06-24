@@ -19,6 +19,7 @@ namespace Unterrichtsbewertungstool
         Thread connectThread;
         int port = 0;
         IPAddress ip;
+        Client client;
 
         public ConnectForm()
         {
@@ -63,10 +64,8 @@ namespace Unterrichtsbewertungstool
 
         private void btnconnect_Click(object sender, EventArgs e)
         {
-            //Methode unvollständig!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //try to connect in neuem thread und öffnen der nächsten form 
-            //connectThread.Start(); //noch wird es aufgrund von unvollständigkeit nicht benutzt ... zudem auch nur brainsorm ansatz
-            DiagramForm diagramform = new DiagramForm();
+            client = new Client(ip.ToString(), port);
+            ClientForm diagramform = new ClientForm();
             this.Visible = false;
             diagramform.ShowDialog();
             this.Visible = true;
@@ -74,7 +73,6 @@ namespace Unterrichtsbewertungstool
         }
         private void connectTest()
         {
-            //Methode unvollständig!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TcpClient client = new TcpClient();
             client.Connect(ip, port);
             ASCIIEncoding encoder = new ASCIIEncoding();

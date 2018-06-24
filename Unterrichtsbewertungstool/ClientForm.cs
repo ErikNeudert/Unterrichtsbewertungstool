@@ -18,7 +18,7 @@ namespace Unterrichtsbewertungstool
         int maxdiagramheight = 300;
         Point diagramposition = new Point(10, 10);
         int clientcount = 2;
-        List<ClientData> dataList;
+        List<User> dataList;
         long lowestdate = long.MaxValue;
         long highestdate = long.MinValue;
         List<Color> linecolors = new List<Color>();
@@ -73,10 +73,10 @@ namespace Unterrichtsbewertungstool
         {
             string[] buffer = datastring.Split('|');
             clientcount = buffer.Length;
-            dataList = new List<ClientData>();
+            dataList = new List<User>();
             for (int b = 0; b < buffer.Length; b++)
             {
-                dataList.Add(new ClientData());
+                dataList.Add(new User());
                 string[] valuebuffer = buffer[b].Split(',');
                 for (int v = 0; v < valuebuffer.Length; v++)
                 {

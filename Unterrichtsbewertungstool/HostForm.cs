@@ -7,22 +7,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Unterrichtsbewertungstool
 {
     public partial class HostForm : Form
-    {       
+    {
         //Lokale Variablen
         int port = 0;
+        IPAddress ip = IPAddress.Parse("127.0.0.1");
         public HostForm()
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;         //Startposition Zentrieren  
             btnhost.Enabled = false;                                //Hostbutton deaktivieren
 
+            IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
+            cbip.Text = string.Empty;
+            foreach (IPAddress addr in localIPs)
+            {
+                if (addr.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    cbip.Items.Add(addr);
+                }
+            }
+
             //Beschriften der Elemente
             tbxPort.Text = "Port";
-            lblport.Text = "Port";
+            lblport.Text = "IP & Port";
             btnhost.Text = "Hosten";
             tbxPort.ForeColor = System.Drawing.Color.Gray;
 
@@ -31,7 +44,7 @@ namespace Unterrichtsbewertungstool
         private void tbxPort_Enter(object sender, EventArgs e)
         {
             //Watermark Text ausblenden(Farbe auf Hellgrau?)
-           // Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
+            // Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
         }
 
         private void tbxPort_Leave(object sender, EventArgs e)
@@ -44,28 +57,55 @@ namespace Unterrichtsbewertungstool
         private void tbxPort_TextChanged(object sender, EventArgs e)
         {
             //Prüfen ob der Port korrekt ist um den Host Button freizuschalten
+            checkinput();
+
+        }
+
+        private void checkinput()
+        {
             if (Operations.CheckPort(tbxPort.Text, ref port))
             {
-                btnhost.Enabled = true;
+                if (Operations.CheckIP(cbip.Text, ref ip))
+                {
+
+                    btnhost.Enabled = true;
+                }
+                else
+                {
+                    btnhost.Enabled = false;
+                }
             }
             else
             {
                 btnhost.Enabled = false;
             }
-
         }
 
         private void btnhost_Click(object sender, EventArgs e)
         {
             //HostClass host = new HostClass(port); //unvollständig brainstormung ansatz
             //Host oberfläche aufrufen
-            
+            Server server = new Server(ip,port);
+            ClientForm clientform = new ClientForm();
+            this.Visible = false;
+            clientform.ShowDialog();
+            this.Visible = true;
         }
 
         private void tbxPort_KeyDown(object sender, KeyEventArgs e)
         {
             Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
 
+        }
+
+        private void cbip_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            checkinput();
+        }
+
+        private void cbip_TextChanged(object sender, EventArgs e)
+        {
+            checkinput();
         }
     }
 }
