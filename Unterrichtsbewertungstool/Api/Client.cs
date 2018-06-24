@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -8,7 +9,8 @@ namespace Unterrichtsbewertungstool
 {
     class Client : NetworkComponent
     {
-        private ClientData clientData;
+        //private ClientData clientData
+        private List<Bewertung> bewertungen;
         private string serverIp;
         private int serverPort;
         private TcpClient tcpServer;
@@ -23,7 +25,7 @@ namespace Unterrichtsbewertungstool
 
         public void addData(Bewertung bewertung)
         {
-            clientData.bewertungen.Add(bewertung);
+            bewertungen.Add(bewertung);
         }
 
         public ServerData getServerData()
@@ -49,7 +51,7 @@ namespace Unterrichtsbewertungstool
 
         public void sendData()
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, clientData);
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, bewertungen);
             send(tcpServer.GetStream(), sendObj);
             //maybe check status afterwards
             //and return if successfull

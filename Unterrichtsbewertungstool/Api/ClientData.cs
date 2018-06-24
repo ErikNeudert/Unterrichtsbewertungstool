@@ -10,69 +10,78 @@ namespace Unterrichtsbewertungstool
 {
     public class ServerData
     {
-        public ConcurrentDictionary<IPAddress, ClientData> serverData { get; private set; }
+        private ConcurrentDictionary<IPAddress, List<Bewertung>> serverData { get; set; }
 
         public ServerData()
         {
-            serverData = new ConcurrentDictionary<IPAddress, ClientData>();
+            serverData = new ConcurrentDictionary<IPAddress, List<Bewertung>>();
         }
 
-        public void addData(IPAddress address, ClientData data)
+        public void addBewertungen(IPAddress address, List<Bewertung> data)
         {
-            serverData.TryAdd(address, data);
+            if (serverData.ContainsKey(address))
+            {
+                List<Bewertung> bewertungen;
+                serverData.TryGetValue(address, out bewertungen);
+                bewertungen.AddRange(data);
+            }
+            else
+            {
+                serverData.TryAdd(address, data);
+            }
         }
     }
 
-    public class ClientData
-    {
-        //public static readonly char BEWERTUNGS_SPLIT_CHAR = ',';
-        //public static readonly char FELDER_SPLIT_CHAR = ',';
+    //public class ClientData
+    //{
+    //    //public static readonly char BEWERTUNGS_SPLIT_CHAR = ',';
+    //    //public static readonly char FELDER_SPLIT_CHAR = ',';
 
-        public IPAddress ip { get; private set; }
-        public List<Bewertung> bewertungen { get; private set; }
+    //    public IPAddress ip { get; private set; }
+    //    public List<Bewertung> bewertungen { get; private set; }
 
-        public ClientData(IPAddress ip)
-        {
-            this.ip = ip;
-            this.bewertungen = new List<Bewertung>();
-        }
+    //    public ClientData(IPAddress ip)
+    //    {
+    //        this.ip = ip;
+    //        this.bewertungen = new List<Bewertung>();
+    //    }
 
-        //public string serialize()
-        //{
-        //    StringBuilder sb = new StringBuilder();
+    //    //public string serialize()
+    //    //{
+    //    //    StringBuilder sb = new StringBuilder();
 
-        //    Boolean firstBewertung = true;
-        //    foreach (Bewertung bewertung in bewertungen)
-        //    {
-        //        if (firstBewertung)
-        //        {
-        //            firstBewertung = false;
-        //        } else
-        //        {
-        //            sb.Append(BEWERTUNGS_SPLIT_CHAR);
-        //        }
-        //        sb.Append(bewertung.timeStampMillis);
-        //        sb.Append(FELDER_SPLIT_CHAR);
-        //        sb.Append(bewertung.punkte);
-        //    }
+    //    //    Boolean firstBewertung = true;
+    //    //    foreach (Bewertung bewertung in bewertungen)
+    //    //    {
+    //    //        if (firstBewertung)
+    //    //        {
+    //    //            firstBewertung = false;
+    //    //        } else
+    //    //        {
+    //    //            sb.Append(BEWERTUNGS_SPLIT_CHAR);
+    //    //        }
+    //    //        sb.Append(bewertung.timeStampMillis);
+    //    //        sb.Append(FELDER_SPLIT_CHAR);
+    //    //        sb.Append(bewertung.punkte);
+    //    //    }
 
-        //    return sb.ToString();
-        //}
+    //    //    return sb.ToString();
+    //    //}
 
-        //public void deserialize(string serialized)
-        //{
-        //    string[] bewertungenSplit = serialized.Split();
+    //    //public void deserialize(string serialized)
+    //    //{
+    //    //    string[] bewertungenSplit = serialized.Split();
 
-        //    foreach (string bewertungString in bewertungenSplit)
-        //    {
-        //        string[] bewertungsFelder = bewertungString.Split(FELDER_SPLIT_CHAR);
-        //        int punkte = int.Parse(bewertungsFelder[0]);
-        //        long millis = long.Parse(bewertungsFelder[1]);
-        //        Bewertung bewertung = new Bewertung(punkte, millis);
-        //        bewertungen.Add(bewertung);
-        //    }
+    //    //    foreach (string bewertungString in bewertungenSplit)
+    //    //    {
+    //    //        string[] bewertungsFelder = bewertungString.Split(FELDER_SPLIT_CHAR);
+    //    //        int punkte = int.Parse(bewertungsFelder[0]);
+    //    //        long millis = long.Parse(bewertungsFelder[1]);
+    //    //        Bewertung bewertung = new Bewertung(punkte, millis);
+    //    //        bewertungen.Add(bewertung);
+    //    //    }
 
-        //    return bewertungen;
-        //}
-    }
+    //    //    return bewertungen;
+    //    //}
+    //}
 }
