@@ -101,8 +101,6 @@ namespace Unterrichtsbewertungstool
             {
                 TransferObject receivedObj = receive(stream);
                 WaitCallback actionCallback = getActionMethod(receivedObj.action);
-                
-                //status
                 Action action = new Action(client, receivedObj.data);
 
                 Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
@@ -115,15 +113,6 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        /* C# Doc goes here
-         * 
-         * use powers of two as value to make it bit wise
-         */
-
-        /**
-         * Should probably return the actual action like do stuff to the data, send the data etc
-         * 
-         */
         private WaitCallback getActionMethod(ExecutableActions actionToTake)
         {
             switch (actionToTake)
@@ -163,9 +152,9 @@ namespace Unterrichtsbewertungstool
             String clientIp = client.Client.RemoteEndPoint.ToString();
             Debug.WriteLine(clientIp);
 
-            if (dataObject is ClientData)
+            if (dataObject is List<Bewertung>)
             {
-                serverData.addData(IPAddress.Parse("1.1.1.1"), (ClientData) dataObject);
+                serverData.addBewertungen(IPAddress.Parse("1.1.1.1"), (List<Bewertung>) dataObject);
             }
             else
             {
