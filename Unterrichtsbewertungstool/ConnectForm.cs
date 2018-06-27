@@ -17,8 +17,8 @@ namespace Unterrichtsbewertungstool
     {
         //Lokale variablen
         Thread connectThread;
-        int port = 0;
-        IPAddress ip;
+        int _port = 0;
+        IPAddress _ip;
         Client client;
 
         public ConnectForm()
@@ -26,7 +26,7 @@ namespace Unterrichtsbewertungstool
             InitializeComponent();
             btnconnect.Enabled = false;                         //Verbindungsbutton deaktivieren
             StartPosition = FormStartPosition.CenterScreen;     //Startposition Zentrieren
-            connectThread = new Thread(connectTest);                //thread initialisieren //Unvollständig 
+            connectThread = new Thread(ConnectTest);                //thread initialisieren //Unvollständig 
 
             //Beschriften der Elemente
             lblipandport.Text = "IP und Port";
@@ -64,21 +64,21 @@ namespace Unterrichtsbewertungstool
 
         private void btnconnect_Click(object sender, EventArgs e)
         {
-            client = new Client(ip.ToString(), port);
-            ClientForm diagramform = new ClientForm();
+            client = new Client(_ip, _port);
+            ClientForm diagramform = new ClientForm(_ip,_port);
             this.Visible = false;
             diagramform.ShowDialog();
             this.Visible = true;
 
         }
-        private void connectTest()
+        private void ConnectTest()
         {
             TcpClient client = new TcpClient();
-            client.Connect(ip, port);
+            client.Connect(_ip, _port);
             ASCIIEncoding encoder = new ASCIIEncoding();
             NetworkStream stream = client.GetStream();
 
-            IPAddress localip = ip;
+            IPAddress localip = _ip;
             IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
             foreach (IPAddress addr in localIPs)
             {
@@ -94,10 +94,10 @@ namespace Unterrichtsbewertungstool
 
 
         }
-        private void checkforButton()
+        private void CheckforButton()
         {
             //Prüfen ob IP und Port korrekt sind um den Verbindungsbutton freizuschalten
-            if (OperationUtils.CheckIP(tbxIP.Text, ref ip) && OperationUtils.CheckPort(tbxPort.Text, ref port))
+            if (OperationUtils.CheckIP(tbxIP.Text, ref _ip) && OperationUtils.CheckPort(tbxPort.Text, ref _port))
             {
                 btnconnect.Enabled = true;
             }
@@ -109,13 +109,13 @@ namespace Unterrichtsbewertungstool
         private void tbxIP_TextChanged(object sender, EventArgs e)
         {
             //Verknüpfung der Buttons für die Prüfmethode
-            checkforButton();
+            CheckforButton();
         }
 
         private void tbxPort_TextChanged(object sender, EventArgs e)
         {
             //Verknüpfung der Buttons für die Prüfmethode
-            checkforButton();
+            CheckforButton();
         }
 
         private void tbxIP_KeyDown(object sender, KeyEventArgs e)

@@ -15,10 +15,8 @@ namespace Unterrichtsbewertungstool
     public class Server : NetworkComponent
     {
         //private BlockingCollection<Action> work = new BlockingCollection<Action>();
-        private IPAddress address;
         private Boolean isRunning;
         private Thread listenerThread;
-        private Thread workerThread;
         private TcpListener tcpListener;
         private ServerData serverData = new ServerData();
         private string _name;
@@ -29,7 +27,7 @@ namespace Unterrichtsbewertungstool
             //set variables
             _name = name;
             isRunning = true;
-            tcpListener = new TcpListener(address, port);
+            tcpListener = new TcpListener(serverAddress, port);
         }
 
         public void start()
@@ -45,7 +43,6 @@ namespace Unterrichtsbewertungstool
         {
             isRunning = false;
             listenerThread.Join(100);
-            workerThread.Join(100);
             tcpListener.Stop();
         }
 

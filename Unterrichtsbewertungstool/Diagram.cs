@@ -17,7 +17,7 @@ namespace Unterrichtsbewertungstool
         private int _colorindex = 0;
         private List<Color> _linecolors = new List<Color>();
         private Graphics _graphic;
-        private List<Point[]> _userpoints= new List<Point[]>();
+        private List<Point[]> _userpoints = new List<Point[]>();
 
         public Diagram(int maxvalue, Graphics graphics)
         {
@@ -39,7 +39,7 @@ namespace Unterrichtsbewertungstool
                     _pointList.Add(GetPointPosition(bewertung.TimeStampMillis, bewertung.Punkte, start, ende));
                 }
                 _userpoints.Add(_pointList.ToArray());
-               
+
             }
         }
         public void Draw()
@@ -51,7 +51,7 @@ namespace Unterrichtsbewertungstool
             };
             foreach (Point[] pointArray in _userpoints)
             {
-                _graphic.DrawLines(pen,pointArray);
+                _graphic.DrawLines(pen, pointArray);
                 pen.Width = 2;
                 pen.Color = GetnextColor();
             }
@@ -65,6 +65,9 @@ namespace Unterrichtsbewertungstool
             return new Point(x, y);
         }
 
+        /// <summary>
+        /// Hinzufügen der in frage kommenden Farben für das Linien Diagramm
+        /// </summary>
         private void InitializeColors()
         {
             _linecolors.Add(Color.Red);
@@ -88,6 +91,9 @@ namespace Unterrichtsbewertungstool
             _linecolors.Add(Color.DodgerBlue);
             _linecolors.Add(Color.IndianRed);
         }
+
+
+
         private Color GetnextColor()
         {
             if (_colorindex > _linecolors.Count)
