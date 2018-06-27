@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace Unterrichtsbewertungstool
 {
     //Klassenname überarbeiten 
-    class Operations
+    class OperationUtils
     {
         public static bool CheckPort(string s, ref int port)
         {
@@ -22,9 +22,10 @@ namespace Unterrichtsbewertungstool
                 {
                     return true;
                 }
-            } return false;
+            }
+            return false;
         }
-        public static bool CheckIP(string s,ref IPAddress ip)
+        public static bool CheckIP(string s, ref IPAddress ip)
         {
             //Prüft ob die IP gültig ist und weist diese der Referenz zu
             if (System.Net.IPAddress.TryParse(s, out ip))

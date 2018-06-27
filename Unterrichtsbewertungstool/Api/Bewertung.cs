@@ -2,8 +2,8 @@
 {
     public class Bewertung
     {
-        public int punkte;
-        public long timeStampMillis;
+        public int punkte { get; set; }
+        public long timeStampMillis { get; set; }
 
         public Bewertung(int punkte, long timeStampMillis)
         {

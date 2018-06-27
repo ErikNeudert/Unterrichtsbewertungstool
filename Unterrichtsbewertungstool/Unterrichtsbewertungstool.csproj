@@ -44,18 +44,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
+    <Compile Include="Api\Bewertung.cs" />
+    <Compile Include="Api\Client.cs" />
+    <Compile Include="Api\ServerData.cs" />
+    <Compile Include="Api\NetworkComponent.cs" />
+    <Compile Include="Api\Server.cs" />
     <Compile Include="Diagram.cs" />
-    <Compile Include="NetworkComponent.cs" />
-    <Compile Include="Operations.cs" />
+    <Compile Include="OperationUtils.cs" />
     <Compile Include="ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Server.cs" />
-    <Compile Include="User.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

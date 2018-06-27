@@ -18,7 +18,7 @@ namespace Unterrichtsbewertungstool
         private int _colorindex = 0;
         private List<Color> _linecolors = new List<Color>();
         private Graphics _graphic;
-        private List<User> _userList = new List<User>();
+        private ServerData _userList = new List<Bewertung>();
 
 
         public Diagram(long hightestdate, long lowestdate, int maxvalue, Graphics graphics, List<User> users)

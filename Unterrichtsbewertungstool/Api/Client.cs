@@ -10,6 +10,7 @@ namespace Unterrichtsbewertungstool
     public class Client : NetworkComponent
     {
         //private ClientData clientData
+        private Dictionary<int, List<Bewertung>> diagramData = new Dictionary<int, List<Bewertung>>();
         private List<Bewertung> bewertungen = new List<Bewertung>();
         private string serverIp;
         private int serverPort;
@@ -28,7 +29,7 @@ namespace Unterrichtsbewertungstool
             bewertungen.Add(bewertung);
         }
 
-        public ServerData getServerData()
+        public Dictionary<int, List<Bewertung>> getServerData()
         {
             NetworkStream stream = tcpServer.GetStream();
             TransferObject sendObj;
@@ -39,9 +40,9 @@ namespace Unterrichtsbewertungstool
             receivedObj = receive(stream);
 
             //check receivedObj . status
-            if (receivedObj.data is ServerData)
+            if (receivedObj.data is Dictionary<int, List<Bewertung>>)
             {
-                return (ServerData) receivedObj.data;
+                return (Dictionary<int, List<Bewertung>>) receivedObj.data;
             }
             else
             {

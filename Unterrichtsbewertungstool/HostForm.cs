@@ -50,7 +50,7 @@ namespace Unterrichtsbewertungstool
         private void tbxPort_Leave(object sender, EventArgs e)
         {
             //Watermark Text einblenden(Farbe auf Hellgrau?)
-            Operations.TextBoxWaterMarkTextLeave(ref tbxPort, "Port");
+            OperationUtils.TextBoxWaterMarkTextLeave(ref tbxPort, "Port");
 
         }
 
@@ -63,9 +63,9 @@ namespace Unterrichtsbewertungstool
 
         private void checkinput()
         {
-            if (Operations.CheckPort(tbxPort.Text, ref port))
+            if (OperationUtils.CheckPort(tbxPort.Text, ref port))
             {
-                if (Operations.CheckIP(cbip.Text, ref ip))
+                if (OperationUtils.CheckIP(cbip.Text, ref ip))
                 {
 
                     btnhost.Enabled = true;
@@ -94,7 +94,7 @@ namespace Unterrichtsbewertungstool
 
         private void tbxPort_KeyDown(object sender, KeyEventArgs e)
         {
-            Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
+            OperationUtils.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
 
         }
 

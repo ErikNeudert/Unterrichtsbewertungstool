@@ -13,7 +13,6 @@ namespace Unterrichtsbewertungstool
 
     public partial class ClientForm : Form
     {
-        private List<User> _userList = new List<User>();
         private long _lowestdate = long.MaxValue;
         private long _highestdate = long.MinValue;
         private Diagram _diagram = null;
@@ -34,6 +33,9 @@ namespace Unterrichtsbewertungstool
         public void InitializeDiagram(string datastring)
         {
             string[] buffer = datastring.Split('|');
+
+
+
             _userList = new List<User>();
             for (int b = 0; b < buffer.Length; b++)
             {

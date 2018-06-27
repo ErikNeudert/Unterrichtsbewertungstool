@@ -47,7 +47,7 @@ namespace Unterrichtsbewertungstool
         private void tbxPort_Leave(object sender, EventArgs e)
         {
             //Watermark Text einblenden(Farbe auf Hellgrau?)
-            Operations.TextBoxWaterMarkTextLeave(ref tbxPort, "Port");
+            OperationUtils.TextBoxWaterMarkTextLeave(ref tbxPort, "Port");
         }
 
         private void tbxIP_Enter(object sender, EventArgs e)
@@ -59,7 +59,7 @@ namespace Unterrichtsbewertungstool
         private void tbxIP_Leave(object sender, EventArgs e)
         {
             //Watermark Text ausblenden(Farbe auf Hellgrau?)
-            Operations.TextBoxWaterMarkTextLeave(ref tbxIP, "IP");
+            OperationUtils.TextBoxWaterMarkTextLeave(ref tbxIP, "IP");
         }
 
         private void btnconnect_Click(object sender, EventArgs e)
@@ -97,7 +97,7 @@ namespace Unterrichtsbewertungstool
         private void checkforButton()
         {
             //Prüfen ob IP und Port korrekt sind um den Verbindungsbutton freizuschalten
-            if (Operations.CheckIP(tbxIP.Text, ref ip) && Operations.CheckPort(tbxPort.Text, ref port))
+            if (OperationUtils.CheckIP(tbxIP.Text, ref ip) && OperationUtils.CheckPort(tbxPort.Text, ref port))
             {
                 btnconnect.Enabled = true;
             }
@@ -120,13 +120,13 @@ namespace Unterrichtsbewertungstool
 
         private void tbxIP_KeyDown(object sender, KeyEventArgs e)
         {
-            Operations.TextBoxWaterMarkTextEnter(ref tbxIP, "IP");
+            OperationUtils.TextBoxWaterMarkTextEnter(ref tbxIP, "IP");
 
         }
 
         private void tbxPort_KeyDown(object sender, KeyEventArgs e)
         {
-            Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
+            OperationUtils.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
 
         }
     }
