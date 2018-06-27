@@ -9,8 +9,6 @@ namespace Unterrichtsbewertungstool
 {
     class User
     {
-        public List<long> times = new List<long>();
-        public List<long> values = new List<long>();
-
+        public Dictionary<long, long> Data = new Dictionary<long, long>();
     }
 }

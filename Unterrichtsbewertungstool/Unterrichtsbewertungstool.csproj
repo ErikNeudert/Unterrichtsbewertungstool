@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client.cs" />
+    <Compile Include="Diagram.cs" />
     <Compile Include="NetworkComponent.cs" />
     <Compile Include="Operations.cs" />
     <Compile Include="ClientForm.cs">
