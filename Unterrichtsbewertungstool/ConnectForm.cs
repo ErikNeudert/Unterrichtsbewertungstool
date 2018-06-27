@@ -64,8 +64,7 @@ namespace Unterrichtsbewertungstool
 
         private void btnconnect_Click(object sender, EventArgs e)
         {
-            client = new Client(_ip, _port);
-            ClientForm diagramform = new ClientForm(_ip,_port);
+            ClientForm diagramform = new ClientForm(ip, port);
             this.Visible = false;
             diagramform.ShowDialog();
             this.Visible = true;
