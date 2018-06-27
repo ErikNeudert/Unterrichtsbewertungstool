@@ -7,10 +7,10 @@ using Unterrichtsbewertungstool;
 
 namespace Unterrichtsbewertungstool
 {
-    class Client : NetworkComponent
+    public class Client : NetworkComponent
     {
         //private ClientData clientData
-        private List<Bewertung> bewertungen;
+        private List<Bewertung> bewertungen = new List<Bewertung>();
         private string serverIp;
         private int serverPort;
         private TcpClient tcpServer;

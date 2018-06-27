@@ -50,8 +50,8 @@ namespace Unterrichtsbewertungstool
         public void stop()
         {
             isRunning = false;
-            listenerThread.Join(1000);
-            workerThread.Join(1000);
+            listenerThread.Join(100);
+            workerThread.Join(100);
             tcpListener.Stop();
         }
 
@@ -138,7 +138,7 @@ namespace Unterrichtsbewertungstool
             TcpClient client = action.getClient();
             NetworkStream stream = client.GetStream();
             //some clients might get more information than others (switch on client ip...)
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData);
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.getBewertungen());
 
             send(stream, sendObj);
         }
@@ -147,14 +147,14 @@ namespace Unterrichtsbewertungstool
         {
             Action action = (Action) state;
             TcpClient client = action.getClient();
-            object dataObject = action.getData();
+            IPEndPoint remoteIpEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
+            IPAddress clientIp = remoteIpEndPoint.Address;
 
-            String clientIp = client.Client.RemoteEndPoint.ToString();
-            Debug.WriteLine(clientIp);
+            object dataObject = action.getData();
 
             if (dataObject is List<Bewertung>)
             {
-                serverData.addBewertungen(IPAddress.Parse("1.1.1.1"), (List<Bewertung>) dataObject);
+                serverData.addBewertungen(clientIp, (List<Bewertung>) dataObject);
             }
             else
             {
