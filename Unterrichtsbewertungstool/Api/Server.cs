@@ -73,25 +73,6 @@ namespace Unterrichtsbewertungstool
             );
         }
 
-        //private Thread startWorkers(BlockingCollection<Action> queue)
-        //{
-        //    return new Thread(() =>
-        //    {
-        //        while (isRunning)
-        //        {
-        //            Debug.WriteLine("Waiting on queue");
-
-        //            Action action = queue.Take();
-
-        //            Debug.WriteLine("Assigning action to worker: " + action);
-
-        //            WaitCallback actionCallback = action.GetActionCallback();
-        //            ThreadPool.QueueUserWorkItem(actionCallback, action);
-        //        }
-        //    }
-        //    );
-        //}
-
         private void listen(object clientObject)
         {
             TcpClient client = (TcpClient) clientObject;
@@ -147,18 +128,21 @@ namespace Unterrichtsbewertungstool
         {
             Action action = (Action) state;
             TcpClient client = action.getClient();
+            long timeStamp = DateTime.Now.Millisecond;
+
             IPEndPoint remoteIpEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
             IPAddress clientIp = remoteIpEndPoint.Address;
 
             object dataObject = action.getData();
 
-            if (dataObject is List<Bewertung>)
+            if (dataObject is int)
             {
-                serverData.addBewertungen(clientIp, (List<Bewertung>) dataObject);
+                Bewertung bewertung = new Bewertung((int)dataObject, timeStamp);
+                serverData.addBewertung(clientIp, bewertung);
             }
             else
             {
-                Debug.WriteLine("ERROR, Invalid DataObject received." + dataObject.GetType());
+                Debug.WriteLine("ERROR, Invalid DataObject received. Expected int but was: " + dataObject.GetType());
             }
         }
 

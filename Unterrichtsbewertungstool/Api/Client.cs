@@ -10,8 +10,7 @@ namespace Unterrichtsbewertungstool
     public class Client : NetworkComponent
     {
         //private ClientData clientData
-        private Dictionary<int, List<Bewertung>> diagramData = new Dictionary<int, List<Bewertung>>();
-        private List<Bewertung> bewertungen = new List<Bewertung>();
+        private Dictionary<int, List<Bewertung>> diagramData;
         private IPAddress serverIp;
         private int serverPort;
         private TcpClient tcpServer;
@@ -21,6 +20,7 @@ namespace Unterrichtsbewertungstool
             this.serverIp = serverIp;
             this.serverPort = serverPort;
             tcpServer = new TcpClient();
+            diagramData = new Dictionary<int, List<Bewertung>>();
         }
 
         public Boolean Connect()
@@ -37,11 +37,6 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public void addData(Bewertung bewertung)
-        {
-            bewertungen.Add(bewertung);
-        }
-
         public Dictionary<int, List<Bewertung>> getServerData()
         {
             NetworkStream stream = tcpServer.GetStream();
@@ -52,10 +47,9 @@ namespace Unterrichtsbewertungstool
             send(stream, sendObj);
             receivedObj = receive(stream);
 
-            //check receivedObj . status
             if (receivedObj.data is Dictionary<int, List<Bewertung>>)
             {
-                return (Dictionary<int, List<Bewertung>>) receivedObj.data;
+                return (Dictionary<int, List<Bewertung>>)receivedObj.data;
             }
             else
             {
@@ -63,14 +57,10 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public void sendData()
+        public void sendData(int punkte)
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, bewertungen);
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
             send(tcpServer.GetStream(), sendObj);
-            //maybe check status afterwards
-            //and return if successfull
-            //String serializedData = serializeData(data);
-            //send(tcpServer, "");
         }
     }
 }

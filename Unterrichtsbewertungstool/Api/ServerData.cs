@@ -17,7 +17,7 @@ namespace Unterrichtsbewertungstool
             serverData = new ConcurrentDictionary<IPAddress, List<Bewertung>>();
         }
 
-        public void addBewertungen(IPAddress address, List<Bewertung> data)
+        public void addBewertung(IPAddress address, Bewertung bewertung)
         {
             if (address == null)
             {
@@ -28,11 +28,13 @@ namespace Unterrichtsbewertungstool
             {
                 List<Bewertung> bewertungen;
                 serverData.TryGetValue(address, out bewertungen);
-                bewertungen.AddRange(data);
+                bewertungen.Add(bewertung);
             }
             else
             {
-                serverData.TryAdd(address, data);
+                List<Bewertung> bewertungen = new List<Bewertung>();
+                bewertungen.Add(bewertung);
+                serverData.TryAdd(address, bewertungen);
             }
         }
 

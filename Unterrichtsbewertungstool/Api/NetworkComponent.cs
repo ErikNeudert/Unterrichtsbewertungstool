@@ -15,7 +15,7 @@ namespace Unterrichtsbewertungstool
     {
         protected IFormatter formatter = new BinaryFormatter();
 
-        public void send(Stream stream, TransferObject obj)
+        protected void send(Stream stream, TransferObject obj)
         {
             if (stream.CanWrite)
             {
@@ -27,19 +27,19 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public TransferObject receive(Stream stream)
+        protected TransferObject receive(Stream stream)
         {
             return (TransferObject)formatter.Deserialize(stream);
         }
 
-        public enum ExecutableActions
+        protected enum ExecutableActions
         {
             SEND,
             REQUEST,
         }
 
         [Serializable]
-        public class TransferObject
+        protected class TransferObject
         {
             public StatusCode status { get; set; }
             public ExecutableActions action { get; set; }
