@@ -19,6 +19,11 @@ namespace Unterrichtsbewertungstool
 
         public void addBewertungen(IPAddress address, List<Bewertung> data)
         {
+            if (address == null)
+            {
+                throw new ArgumentNullException(nameof(address));
+            }
+
             if (serverData.ContainsKey(address))
             {
                 List<Bewertung> bewertungen;
@@ -30,58 +35,19 @@ namespace Unterrichtsbewertungstool
                 serverData.TryAdd(address, data);
             }
         }
+
+        public Dictionary<int, List<Bewertung>> getBewertungen()
+        {
+            //Should return obfuscated stuff
+            Dictionary<int, List<Bewertung>> obfuscatedDict = new Dictionary<int, List<Bewertung>>();
+
+            int counter = 0;
+            foreach (List<Bewertung> bewertungen in serverData.Values)
+            {
+                obfuscatedDict.Add(counter++, bewertungen);
+            }
+
+            return obfuscatedDict;
+        }
     }
-
-    //public class ClientData
-    //{
-    //    //public static readonly char BEWERTUNGS_SPLIT_CHAR = ',';
-    //    //public static readonly char FELDER_SPLIT_CHAR = ',';
-
-    //    public IPAddress ip { get; private set; }
-    //    public List<Bewertung> bewertungen { get; private set; }
-
-    //    public ClientData(IPAddress ip)
-    //    {
-    //        this.ip = ip;
-    //        this.bewertungen = new List<Bewertung>();
-    //    }
-
-    //    //public string serialize()
-    //    //{
-    //    //    StringBuilder sb = new StringBuilder();
-
-    //    //    Boolean firstBewertung = true;
-    //    //    foreach (Bewertung bewertung in bewertungen)
-    //    //    {
-    //    //        if (firstBewertung)
-    //    //        {
-    //    //            firstBewertung = false;
-    //    //        } else
-    //    //        {
-    //    //            sb.Append(BEWERTUNGS_SPLIT_CHAR);
-    //    //        }
-    //    //        sb.Append(bewertung.timeStampMillis);
-    //    //        sb.Append(FELDER_SPLIT_CHAR);
-    //    //        sb.Append(bewertung.punkte);
-    //    //    }
-
-    //    //    return sb.ToString();
-    //    //}
-
-    //    //public void deserialize(string serialized)
-    //    //{
-    //    //    string[] bewertungenSplit = serialized.Split();
-
-    //    //    foreach (string bewertungString in bewertungenSplit)
-    //    //    {
-    //    //        string[] bewertungsFelder = bewertungString.Split(FELDER_SPLIT_CHAR);
-    //    //        int punkte = int.Parse(bewertungsFelder[0]);
-    //    //        long millis = long.Parse(bewertungsFelder[1]);
-    //    //        Bewertung bewertung = new Bewertung(punkte, millis);
-    //    //        bewertungen.Add(bewertung);
-    //    //    }
-
-    //    //    return bewertungen;
-    //    //}
-    //}
 }
