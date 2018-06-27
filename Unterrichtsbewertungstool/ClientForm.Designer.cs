@@ -44,7 +44,7 @@
             this.tbscore.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.tbscore.Size = new System.Drawing.Size(45, 200);
             this.tbscore.TabIndex = 0;
-            this.tbscore.Scroll += new System.EventHandler(this.tbscore_Scroll);
+            this.tbscore.Scroll += new System.EventHandler(this.Tbscore_Scroll);
             // 
             // lblscore
             // 
@@ -65,7 +65,7 @@
             this.pbdiagram.Size = new System.Drawing.Size(400, 200);
             this.pbdiagram.TabIndex = 3;
             this.pbdiagram.TabStop = false;
-            this.pbdiagram.Paint += new System.Windows.Forms.PaintEventHandler(this.pbdiagram_Paint);
+            this.pbdiagram.Paint += new System.Windows.Forms.PaintEventHandler(this.Pbdiagram_Paint);
             // 
             // lbldiatitle
             // 

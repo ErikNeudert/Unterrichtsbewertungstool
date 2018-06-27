@@ -45,13 +45,15 @@ namespace Unterrichtsbewertungstool
         public void Draw()
         {
             _colorindex = 0;
-            Pen pen = new Pen(getnextColor());
-            pen.Width = 5;
+            Pen pen = new Pen(GetnextColor())
+            {
+                Width = 5
+            };
             foreach (Point[] pointArray in _userpoints)
             {
                 _graphic.DrawLines(pen,pointArray);
                 pen.Width = 2;
-                pen.Color = getnextColor();
+                pen.Color = GetnextColor();
             }
         }
 
@@ -86,7 +88,7 @@ namespace Unterrichtsbewertungstool
             _linecolors.Add(Color.DodgerBlue);
             _linecolors.Add(Color.IndianRed);
         }
-        private Color getnextColor()
+        private Color GetnextColor()
         {
             if (_colorindex > _linecolors.Count)
             {

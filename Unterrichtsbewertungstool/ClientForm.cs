@@ -56,13 +56,13 @@ namespace Unterrichtsbewertungstool
             _diagram.Draw();
         }
 
-        private void tbscore_Scroll(object sender, EventArgs e)
+        private void Tbscore_Scroll(object sender, EventArgs e)
         {
             _scrollbarvalue = tbscore.Value;
             lblscore.Text = _scrollbarvalue.ToString();
         }
 
-        private void pbdiagram_Paint(object sender, PaintEventArgs e)
+        private void Pbdiagram_Paint(object sender, PaintEventArgs e)
         {
             _diagram.Draw();
         }
