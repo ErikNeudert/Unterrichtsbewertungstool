@@ -36,6 +36,7 @@ namespace Unterrichtsbewertungstool
         {
             SEND,
             REQUEST,
+            REQUEST_NAME
         }
 
         [Serializable]

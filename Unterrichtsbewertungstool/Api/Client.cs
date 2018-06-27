@@ -9,11 +9,11 @@ namespace Unterrichtsbewertungstool
 {
     public class Client : NetworkComponent
     {
-        //private ClientData clientData
+        private string _serverTitel = "Server";
         private Dictionary<int, List<Bewertung>> diagramData;
         private IPAddress serverIp;
-        private int serverPort;
         private TcpClient tcpServer;
+        private int serverPort;
 
         public Client(IPAddress serverIp, int serverPort)
         {
@@ -28,6 +28,7 @@ namespace Unterrichtsbewertungstool
             try
             {
                 tcpServer.Connect(this.serverIp, this.serverPort);
+                _serverTitel = requestServerName();
                 return true;
             }
             catch (Exception e)
@@ -37,7 +38,7 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public Dictionary<int, List<Bewertung>> getServerData()
+        public Dictionary<int, List<Bewertung>> RequestServerData()
         {
             NetworkStream stream = tcpServer.GetStream();
             TransferObject sendObj;
@@ -55,6 +56,27 @@ namespace Unterrichtsbewertungstool
             {
                 throw new Exception("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.data.GetType());
             }
+        }
+
+        public string requestServerName()
+        {
+            NetworkStream stream = tcpServer.GetStream();
+            TransferObject sendObj;
+            TransferObject receivedObj;
+
+            sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
+            send(stream, sendObj);
+            receivedObj = receive(stream);
+
+            if (receivedObj.data is string)
+            {
+                return (string)receivedObj.data;
+            }
+            else
+            {
+                throw new Exception("Server didn't return its Name, but: " + receivedObj.data.GetType());
+            }
+
         }
 
         public void sendData(int punkte)

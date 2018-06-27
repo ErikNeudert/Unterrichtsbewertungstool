@@ -21,19 +21,13 @@ namespace Unterrichtsbewertungstool
         private Thread workerThread;
         private TcpListener tcpListener;
         private ServerData serverData = new ServerData();
+        private string _name;
 
-        public Server(String serverAdress, int port) : this(IPAddress.Parse(serverAdress), port) { }
-
-        /*
-         * TODO:
-         * Log Ip
-         *   
-         */
-        public Server(IPAddress serverAddress, int port)
+        public Server(IPAddress serverAddress, int port, string name)
         {
             //initialize
             //set variables
-            address = serverAddress;
+            _name = name;
             isRunning = true;
             tcpListener = new TcpListener(address, port);
         }
@@ -99,14 +93,26 @@ namespace Unterrichtsbewertungstool
             switch (actionToTake)
             {
                 case ExecutableActions.SEND:
-                    Debug.WriteLine("Send");
                     return sendData;
                 case ExecutableActions.REQUEST:
-                    Debug.WriteLine("Receive");
                     return receiveData;
+                case ExecutableActions.REQUEST_NAME:
+                    return sendName;
                 default:
+                    Debug.WriteLine("Unknown Action: " + actionToTake);
                     return null;
             }
+        }
+
+        private void sendName(object state)
+        {
+            Action action = (Action)state;
+            TcpClient client = action.getClient();
+            NetworkStream stream = client.GetStream();
+            //some clients might get more information than others (switch on client ip...)
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, _name);
+
+            send(stream, sendObj);
         }
 
         /// <summary>
