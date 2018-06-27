@@ -86,7 +86,7 @@ namespace Unterrichtsbewertungstool
         {
             //HostClass host = new HostClass(port); //unvollständig brainstormung ansatz
             //Host oberfläche aufrufen
-            Server server = new Server(_ip, _port);
+            Server server = new Server(_ip, _port, "Barometer");
             ClientForm clientform = new ClientForm(_ip, _port);
             this.Visible = false;
             clientform.ShowDialog();
