@@ -15,8 +15,9 @@ namespace Unterrichtsbewertungstool
     public partial class HostForm : Form
     {
         //Lokale Variablen
-        int port = 0;
-        IPAddress ip = IPAddress.Parse("127.0.0.1");
+        int _port = 0;
+        IPAddress _ip = null;
+
         public HostForm()
         {
             InitializeComponent();
@@ -63,9 +64,9 @@ namespace Unterrichtsbewertungstool
 
         private void checkinput()
         {
-            if (OperationUtils.CheckPort(tbxPort.Text, ref port))
+            if (OperationUtils.CheckPort(tbxPort.Text, ref _port))
             {
-                if (OperationUtils.CheckIP(cbip.Text, ref ip))
+                if (OperationUtils.CheckIP(cbip.Text, ref _ip))
                 {
 
                     btnhost.Enabled = true;
@@ -85,8 +86,8 @@ namespace Unterrichtsbewertungstool
         {
             //HostClass host = new HostClass(port); //unvollständig brainstormung ansatz
             //Host oberfläche aufrufen
-            Server server = new Server(ip,port);
-            ClientForm clientform = new ClientForm();
+            Server server = new Server(_ip, _port);
+            ClientForm clientform = new ClientForm(_ip, _port);
             this.Visible = false;
             clientform.ShowDialog();
             this.Visible = true;
