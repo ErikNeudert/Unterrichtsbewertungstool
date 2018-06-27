@@ -12,16 +12,29 @@ namespace Unterrichtsbewertungstool
         //private ClientData clientData
         private Dictionary<int, List<Bewertung>> diagramData = new Dictionary<int, List<Bewertung>>();
         private List<Bewertung> bewertungen = new List<Bewertung>();
-        private string serverIp;
+        private IPAddress serverIp;
         private int serverPort;
         private TcpClient tcpServer;
 
-        public Client(string serverIp, int serverPort)
+        public Client(IPAddress serverIp, int serverPort)
         {
             this.serverIp = serverIp;
             this.serverPort = serverPort;
             tcpServer = new TcpClient();
-            tcpServer.Connect(this.serverIp, this.serverPort);
+        }
+
+        public Boolean Connect()
+        {
+            try
+            {
+                tcpServer.Connect(this.serverIp, this.serverPort);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Failed to connect to '" + serverIp + "' - " + e);
+                return false;
+            }
         }
 
         public void addData(Bewertung bewertung)
