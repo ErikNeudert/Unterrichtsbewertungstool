@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace Unterrichtsbewertungstool
 {
@@ -18,24 +21,38 @@ namespace Unterrichtsbewertungstool
         private Diagram _diagram = null;
         private int _colorindex = 0;
         private int _scrollbarvalue = 0;
+        private Client _client;
+        private Thread _abfrageThread;
+        private int _shownMinutesSpan = 30;
 
-        public ClientForm()
+        public ClientForm(IPAddress ip, int port)
         {
             InitializeComponent();
+            _client = new Client(ip, port);
             StartPosition = FormStartPosition.CenterScreen;
+            _diagram = new Diagram(tbscore.Maximum, pbdiagram.CreateGraphics());
+            _abfrageThread = new Thread(() =>
+            {
+                do
+                {
+                    long now = DateTime.Now.Millisecond;
+                    long beginn = now - _shownMinutesSpan * 60 * 1000;
+                    _client.sendData(_scrollbarvalue);
+                    _diagram.GenerateDiagram(_client.getServerData(), beginn, now);
+                    Thread.Sleep(5000);
+                } while (true);
+            });
+            _abfrageThread.Start();
 
             lbldiatitle.Text = "Bewertungen";
             lblscore.Text = tbscore.Value.ToString();
 
             InitializeDiagram("3-6,5-5,12-7,17-8|2-1,5-4|3-1,4-3,5-7,9-3,10-1,14-23,15-17|1-5,2-10,3-5,4-10,5-5,6-10,7-5,8-10,9-5,10-10,11-5,12-10,13-5,14-10,15-5,16-10,17-5,18-10,19-5,20-10");
         }
-
+        
         public void InitializeDiagram(string datastring)
         {
             string[] buffer = datastring.Split('|');
-
-
-
             _userList = new List<User>();
             for (int b = 0; b < buffer.Length; b++)
             {
@@ -56,8 +73,6 @@ namespace Unterrichtsbewertungstool
                 }
             }
 
-            _diagram = new Diagram(_highestdate, _lowestdate, tbscore.Maximum, pbdiagram.CreateGraphics(), _userList);
-            _diagram.Draw();
         }
 
 

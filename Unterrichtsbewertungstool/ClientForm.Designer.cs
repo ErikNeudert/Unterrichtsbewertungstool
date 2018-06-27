@@ -38,11 +38,11 @@
             // 
             // tbscore
             // 
-            this.tbscore.Location = new System.Drawing.Point(487, 12);
+            this.tbscore.Location = new System.Drawing.Point(487, 59);
             this.tbscore.Maximum = 25;
             this.tbscore.Name = "tbscore";
             this.tbscore.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbscore.Size = new System.Drawing.Size(45, 379);
+            this.tbscore.Size = new System.Drawing.Size(45, 200);
             this.tbscore.TabIndex = 0;
             this.tbscore.Scroll += new System.EventHandler(this.tbscore_Scroll);
             // 
@@ -50,7 +50,7 @@
             // 
             this.lblscore.AutoSize = true;
             this.lblscore.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblscore.Location = new System.Drawing.Point(418, 360);
+            this.lblscore.Location = new System.Drawing.Point(469, 30);
             this.lblscore.Name = "lblscore";
             this.lblscore.Size = new System.Drawing.Size(63, 20);
             this.lblscore.TabIndex = 2;
@@ -60,7 +60,7 @@
             // 
             this.pbdiagram.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pbdiagram.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbdiagram.Location = new System.Drawing.Point(40, 100);
+            this.pbdiagram.Location = new System.Drawing.Point(45, 59);
             this.pbdiagram.Name = "pbdiagram";
             this.pbdiagram.Size = new System.Drawing.Size(400, 200);
             this.pbdiagram.TabIndex = 3;
@@ -81,7 +81,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(544, 403);
+            this.ClientSize = new System.Drawing.Size(544, 273);
             this.Controls.Add(this.lbldiatitle);
             this.Controls.Add(this.pbdiagram);
             this.Controls.Add(this.lblscore);

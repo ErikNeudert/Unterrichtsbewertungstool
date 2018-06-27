@@ -12,50 +12,56 @@ namespace Unterrichtsbewertungstool
     {
         private int _maxdiagramwidth = 400;
         private int _maxdiagramheight = 200;
-        private long _highestdate = 0;
-        private long _lowestdate = 0;
+
         private int _maxvalue = 0;
         private int _colorindex = 0;
         private List<Color> _linecolors = new List<Color>();
         private Graphics _graphic;
-        private ServerData _userList = new List<Bewertung>();
 
 
-        public Diagram(long hightestdate, long lowestdate, int maxvalue, Graphics graphics, List<User> users)
+        public Diagram(int maxvalue, Graphics graphics)
         {
-            _highestdate = hightestdate;
-            _highestdate = hightestdate;
-            _lowestdate = lowestdate;
             _maxvalue = maxvalue;
             _graphic = graphics;
             InitializeColors();
-            _userList = users;
-
             _graphic.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         }
 
-        public void Draw()
+
+
+        public void GenerateDiagram(Dictionary<int, List<Bewertung>> userBewertungen, long start, long ende)
+        {
+            List<Point[]> userpoints = new List<Point[]>();
+            foreach (var user in userBewertungen)
+            {
+                List<Point> _pointList = new List<Point>();
+                foreach (Bewertung bewertung in user.Value)
+                {
+                    _pointList.Add(GetPointPosition(bewertung.timeStampMillis, bewertung.punkte, start, ende));
+                }
+                userpoints.Add(_pointList.ToArray());
+               
+            }
+        }
+        public void Draw(List<Point[]> userpoints)
         {
             _colorindex = 0;
             Pen pen = new Pen(getnextColor());
-            foreach (var user in _userList)
+            pen.Width = 5;
+            foreach (Point[] pointArray in userpoints)
             {
-                List<Point> _pointList = new List<Point>();
-                foreach (KeyValuePair<long, long> pair in user.Data)
-                {
-                    _pointList.Add(GetPointPosition(pair.Key, pair.Value));
-                }
-                _graphic.DrawLines(pen, _pointList.ToArray());
+                _graphic.DrawLines(pen,pointArray);
                 pen.Width = 2;
                 pen.Color = getnextColor();
             }
         }
 
 
-        private Point GetPointPosition(long date, long value)
+        private Point GetPointPosition(long date, long value, long start, long ende)
         {
-            return new Point(((int)((_maxdiagramwidth / (_highestdate - _lowestdate)) * (date - _lowestdate))),
-                (int)(_maxdiagramheight - value * (_maxdiagramheight / _maxvalue)));
+            int x = (int)((date - start) / ((ende - start) / _maxdiagramwidth));
+            int y = (int)(_maxdiagramheight - value * (_maxdiagramheight / _maxvalue));
+            return new Point(x, y);
         }
 
         private void InitializeColors()
