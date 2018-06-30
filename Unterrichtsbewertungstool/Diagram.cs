@@ -40,12 +40,13 @@ namespace Unterrichtsbewertungstool
         /// <param name="endtime">Endzeit</param>
         public void GenerateDiagram(Dictionary<int, List<Bewertung>> userBewertungen, long starttime, long endtime)
         {
+            _userpoints.Clear();
             foreach (var user in userBewertungen)
             {
                 List<Point> _pointList = new List<Point>();
                 foreach (Bewertung bewertung in user.Value)
                 {
-                    _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, start, ende));
+                    _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, starttime, endtime));
                 }
                 _userpoints.Add(_pointList.ToArray());
 
@@ -57,6 +58,8 @@ namespace Unterrichtsbewertungstool
         /// </summary>
         public void Draw()
         {
+            //Zurücksetzen des Grafikelements 
+            _graphic.Clear(Color.LightGray);
             //Setzt die Farbreihenfolge zurück und Zeichnet mit Linienbreite 2
             _colorindex = 0;
             Pen pen = new Pen(GetnextColor())

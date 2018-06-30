@@ -79,12 +79,12 @@ namespace Unterrichtsbewertungstool
         private void Btnhost_Click(object sender, EventArgs e)
         {
             Server server = new Server(_ip, _port, tbxTitel.Text);  //Initialisieren des Servers
-            server.start();                                         //Starten des Servers
+            server.Start();                                         //Starten des Servers
             Client client = new Client(_ip, _port);                 //Initialisieren des Servers
             ClientForm clientform = new ClientForm(client);         //Clientform Initialisieren
             this.Visible = false;                                   //Deaktivieren der Aktuellen Form
             clientform.ShowDialog();                                //Zeigen der ClientForm
-            server.stop();                                          //Stoppen des Servers nachdem der Dialog geschlossen wurde
+            server.Stop();                                          //Stoppen des Servers nachdem der Dialog geschlossen wurde
             this.Visible = true;                                    //Aktivieren der Aktuellen Form
         }
 
