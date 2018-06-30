@@ -45,8 +45,7 @@ namespace Unterrichtsbewertungstool
             //Watermark Text ausblenden(Farbe auf Hellgrau?)
             OperationUtils.TextBoxWaterMarkTextLeave(ref tbxIP, "IP");
         }
-
-
+        
         private void Btnconnect_Click(object sender, EventArgs e)
         {
             //Initialisiert den Client und versucht zu verbinden

@@ -57,7 +57,7 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public string requestServerName()
+        public string RequestServerName()
         {
             NetworkStream stream = tcpServer.GetStream();
             TransferObject sendObj;
@@ -78,7 +78,7 @@ namespace Unterrichtsbewertungstool
 
         }
 
-        public bool sendData(int punkte)
+        public bool SendData(int punkte)
         {
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
             if (tcpServer.Connected)

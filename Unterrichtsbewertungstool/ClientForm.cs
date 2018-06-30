@@ -38,7 +38,7 @@ namespace Unterrichtsbewertungstool
                     Thread.Sleep(5000);
                     long now = DateTime.Now.Millisecond;
                     long beginn = now - _shownMinutesSpan * 60 * 1000;
-                    Console.WriteLine(_client.sendData(_scrollbarvalue));
+                    Console.WriteLine(_client.SendData(_scrollbarvalue));
                     _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
                 } while (true);
             });

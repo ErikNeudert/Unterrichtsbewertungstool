@@ -46,7 +46,6 @@
             this.tbxPort.TabIndex = 13;
             this.tbxPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbxPort.TextChanged += new System.EventHandler(this.TbxPort_TextChanged);
-            this.tbxPort.Enter += new System.EventHandler(this.TbxPort_Enter);
             this.tbxPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbxPort_KeyDown);
             this.tbxPort.Leave += new System.EventHandler(this.TbxPort_Leave);
             // 
@@ -75,7 +74,7 @@
             // 
             this.cbip.FormattingEnabled = true;
             this.cbip.Location = new System.Drawing.Point(78, 70);
-            this.cbip.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbip.Margin = new System.Windows.Forms.Padding(2);
             this.cbip.Name = "cbip";
             this.cbip.Size = new System.Drawing.Size(194, 21);
             this.cbip.TabIndex = 12;
@@ -90,7 +89,7 @@
             this.tbxTitel.Size = new System.Drawing.Size(193, 20);
             this.tbxTitel.TabIndex = 10;
             this.tbxTitel.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbxTitel.TextChanged += new System.EventHandler(this.tbxTitel_TextChanged);
+            this.tbxTitel.TextChanged += new System.EventHandler(this.TbxTitel_TextChanged);
             this.tbxTitel.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbxTitel_KeyDown);
             this.tbxTitel.Leave += new System.EventHandler(this.TbxTitel_Leave);
             // 
