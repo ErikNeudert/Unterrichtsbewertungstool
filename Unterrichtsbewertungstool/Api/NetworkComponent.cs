@@ -15,24 +15,68 @@ namespace Unterrichtsbewertungstool
     {
         protected IFormatter formatter = new BinaryFormatter();
 
-        protected void send(Stream stream, TransferObject obj)
+        protected void send(TcpClient tcp, TransferObject obj)
         {
-            if (stream.CanWrite)
+            try
             {
-                var ms = new MemoryStream();
-                formatter.Serialize(ms, obj);
-                stream.Write(ms.ToArray(), 0, (int)ms.Length);
-                stream.Flush();
+                NetworkStream stream = tcp.GetStream();
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    formatter.Serialize(ms, obj);
+                    ms.Position = 0;
+
+                    byte[] sendBuffer = new byte[1024];
+                    int numBytesRead;
+
+                    do
+                    {
+                        numBytesRead = ms.Read(sendBuffer, 0, sendBuffer.Length);
+                        stream.Write(sendBuffer, 0, numBytesRead);
+                    }
+                    while (numBytesRead == sendBuffer.Length);
+                }
             }
-            else
+            catch (InvalidOperationException e)
             {
-                Debug.WriteLine("Could not write to stream: " + stream.ToString());
+                Debug.WriteLine("Error while sending" + e);
+                return;
             }
         }
 
-        protected TransferObject receive(Stream stream)
+        protected TransferObject receive(TcpClient tcp)
         {
-            return (TransferObject)formatter.Deserialize(stream);
+            try
+            {
+                NetworkStream stream = tcp.GetStream();
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    byte[] data = new byte[1024];
+                    int numBytesRead;
+
+                    while (!stream.DataAvailable)
+                    {
+                        Thread.Sleep(200);
+                    }
+
+                    do
+                    {
+                        stream.ReadTimeout = 1000;
+                        numBytesRead = stream.Read(data, 0, data.Length);
+                        ms.Write(data, 0, numBytesRead);
+                    }
+                    while (numBytesRead == data.Length);
+                    ms.Position = 0;
+
+                    return (TransferObject)formatter.Deserialize(ms);
+                }
+            }
+            catch (InvalidOperationException e)
+            {
+                Debug.WriteLine("Error while sending" + e);
+                return new TransferObject(ExecutableActions.SEND, null, TransferObject.StatusCode.ERROR);
+            }
         }
 
         protected enum ExecutableActions

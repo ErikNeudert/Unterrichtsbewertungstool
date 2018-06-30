@@ -45,7 +45,7 @@ namespace Unterrichtsbewertungstool
                 List<Point> _pointList = new List<Point>();
                 foreach (Bewertung bewertung in user.Value)
                 {
-                    _pointList.Add(GetPointPosition(bewertung.TimeStampMillis, bewertung.Punkte, starttime, endtime));
+                    _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, start, ende));
                 }
                 _userpoints.Add(_pointList.ToArray());
 
@@ -67,8 +67,16 @@ namespace Unterrichtsbewertungstool
             //Zeichnet das Aktuelle PointArray
             foreach (Point[] pointArray in _userpoints)
             {
-                _graphic.DrawLines(pen, pointArray);
-                pen.Color = GetnextColor();
+                if (pointArray.Length == 1)
+                {
+                    continue;
+                }
+                else
+                {
+                    _graphic.DrawLines(pen, pointArray);
+                    pen.Width = 2;
+                    pen.Color = GetnextColor();
+                }
             }
         }
 
@@ -120,11 +128,7 @@ namespace Unterrichtsbewertungstool
         /// <returns>Color</returns>
         private Color GetnextColor()
         {
-            if (_colorindex > _linecolors.Count)
-            {
-                _colorindex = 0;
-            }
-            return _linecolors[_colorindex++];
+            return _linecolors[_colorindex++ % 20];
         }
     }
 }

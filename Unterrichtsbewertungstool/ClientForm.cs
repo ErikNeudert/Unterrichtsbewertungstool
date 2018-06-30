@@ -35,11 +35,12 @@ namespace Unterrichtsbewertungstool
                 //Auswählen der Anzuzeigenden Zeitspanne
                 do
                 {
-                    Thread.Sleep(5000);
-                    long now = DateTime.Now.Millisecond;
-                    long beginn = now - _shownMinutesSpan * 60 * 1000;
-                    Console.WriteLine(_client.SendData(_scrollbarvalue));
+                    long now = DateTime.UtcNow.Ticks;
+                    long beginn = now - _shownMinutesSpan * 60 * 1000 * 100000;
+                    _client.sendData(_scrollbarvalue);
                     _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
+                    _diagram.Draw();
+                    Thread.Sleep(3000);
                 } while (true);
             });
             _abfrageThread.Start(); 
@@ -48,6 +49,7 @@ namespace Unterrichtsbewertungstool
             lbldiatitle.Text = "Bewertungen";
             lblscore.Text = tbscore.Value.ToString();
         }
+       
         private void DiagramForm_Paint(object sender, PaintEventArgs e)
         {
             //Diagram zeichnen
