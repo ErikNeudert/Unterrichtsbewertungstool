@@ -43,7 +43,7 @@
             this.btnconnect.TabIndex = 3;
             this.btnconnect.Text = "btnconnect";
             this.btnconnect.UseVisualStyleBackColor = true;
-            this.btnconnect.Click += new System.EventHandler(this.btnconnect_Click);
+            this.btnconnect.Click += new System.EventHandler(this.Btnconnect_Click);
             // 
             // lblipandport
             // 
@@ -62,10 +62,9 @@
             this.tbxIP.Size = new System.Drawing.Size(131, 20);
             this.tbxIP.TabIndex = 5;
             this.tbxIP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.tbxIP.TextChanged += new System.EventHandler(this.tbxIP_TextChanged);
-            this.tbxIP.Enter += new System.EventHandler(this.tbxIP_Enter);
-            this.tbxIP.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbxIP_KeyDown);
-            this.tbxIP.Leave += new System.EventHandler(this.tbxIP_Leave);
+            this.tbxIP.TextChanged += new System.EventHandler(this.TbxIP_TextChanged);
+            this.tbxIP.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbxIP_KeyDown);
+            this.tbxIP.Leave += new System.EventHandler(this.TbxIP_Leave);
             // 
             // tbxPort
             // 
@@ -73,10 +72,9 @@
             this.tbxPort.Name = "tbxPort";
             this.tbxPort.Size = new System.Drawing.Size(118, 20);
             this.tbxPort.TabIndex = 6;
-            this.tbxPort.TextChanged += new System.EventHandler(this.tbxPort_TextChanged);
-            this.tbxPort.Enter += new System.EventHandler(this.tbxPort_Enter);
-            this.tbxPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbxPort_KeyDown);
-            this.tbxPort.Leave += new System.EventHandler(this.tbxPort_Leave);
+            this.tbxPort.TextChanged += new System.EventHandler(this.TbxPort_TextChanged);
+            this.tbxPort.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TbxPort_KeyDown);
+            this.tbxPort.Leave += new System.EventHandler(this.TbxPort_Leave);
             // 
             // ConnectForm
             // 
