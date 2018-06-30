@@ -19,7 +19,10 @@ namespace Unterrichtsbewertungstool
         {
             if (stream.CanWrite)
             {
-                formatter.Serialize(stream, obj);
+                var ms = new MemoryStream();
+                formatter.Serialize(ms, obj);
+                stream.Write(ms.ToArray(), 0, (int)ms.Length);
+                stream.Flush();
             }
             else
             {

@@ -12,7 +12,7 @@ namespace Unterrichtsbewertungstool
         private string _serverTitel = "Server";
         private Dictionary<int, List<Bewertung>> diagramData;
         private IPAddress serverIp;
-        private TcpClient tcpServer;
+        public TcpClient tcpServer;
         private int serverPort;
 
         public Client(IPAddress serverIp, int serverPort)
@@ -28,7 +28,6 @@ namespace Unterrichtsbewertungstool
             try
             {
                 tcpServer.Connect(this.serverIp, this.serverPort);
-                _serverTitel = requestServerName();
                 return true;
             }
             catch (Exception e)
@@ -79,10 +78,16 @@ namespace Unterrichtsbewertungstool
 
         }
 
-        public void sendData(int punkte)
+        public bool sendData(int punkte)
         {
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
-            send(tcpServer.GetStream(), sendObj);
+            if (tcpServer.Connected)
+            {
+                send(tcpServer.GetStream(), sendObj);
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }

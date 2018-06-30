@@ -42,7 +42,7 @@ namespace Unterrichtsbewertungstool
                 tbx.Text = text;
             }
         }
-        public static void TextBoxWaterMarkTextEnter(ref TextBox tbx, string text)
+        public static void TextBoxWaterMarkTextKeyDown(ref TextBox tbx, string text)
         {
             if (tbx.Text == text)
             {
