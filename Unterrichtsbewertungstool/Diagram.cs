@@ -17,7 +17,7 @@ namespace Unterrichtsbewertungstool
         private int _colorindex = 0;
         private List<Color> _linecolors = new List<Color>();
         private Graphics _graphic;
-        private List<Point[]> _userpoints = new List<Point[]>();
+        private Dictionary<int, Point[]> _userpoints = new Dictionary<int, Point[]>();
 
         public Diagram(int maxvalue, Graphics graphics)
         {
@@ -31,25 +31,27 @@ namespace Unterrichtsbewertungstool
 
         public void GenerateDiagram(Dictionary<int, List<Bewertung>> userBewertungen, long start, long ende)
         {
+            _userpoints.Clear();
             foreach (var user in userBewertungen)
             {
+                int userId = user.Key;
                 List<Point> _pointList = new List<Point>();
                 foreach (Bewertung bewertung in user.Value)
                 {
                     _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, start, ende));
                 }
-                _userpoints.Add(_pointList.ToArray());
-
+                _userpoints[userId] = _pointList.ToArray();
             }
         }
         public void Draw()
         {
-            _colorindex = 0;
+            _graphic.Clear(Color.LightGray);
+             _colorindex = 0;
             Pen pen = new Pen(GetnextColor())
             {
                 Width = 5
             };
-            foreach (Point[] pointArray in _userpoints)
+            foreach (Point[] pointArray in _userpoints.Values)
             {
                 if (pointArray.Length == 1)
                 {

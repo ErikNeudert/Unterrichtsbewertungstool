@@ -13,5 +13,11 @@ namespace Unterrichtsbewertungstool
             this.Punkte = punkte;
             this.TimeStampTicks = timeStampTicks;
         }
+
+
+        public override string ToString()
+        {
+            return Punkte + " - " + TimeStampTicks;
+        }
     }
 }

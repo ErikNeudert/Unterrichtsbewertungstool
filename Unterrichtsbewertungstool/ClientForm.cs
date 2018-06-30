@@ -36,11 +36,11 @@ namespace Unterrichtsbewertungstool
                 do
                 {
                     long now = DateTime.UtcNow.Ticks;
-                    long beginn = now - _shownMinutesSpan * 60 * 1000 * 100000;
+                    long beginn = now - _shownMinutesSpan * 60 * 1000 * 10000;
                     _client.sendData(_scrollbarvalue);
                     _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
                     _diagram.Draw();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(100);
                 } while (true);
             });
             _abfrageThread.Start(); 

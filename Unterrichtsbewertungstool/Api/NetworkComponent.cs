@@ -62,7 +62,7 @@ namespace Unterrichtsbewertungstool
 
                     do
                     {
-                        stream.ReadTimeout = 1000;
+                        stream.ReadTimeout = 5000;
                         numBytesRead = stream.Read(data, 0, data.Length);
                         ms.Write(data, 0, numBytesRead);
                     }
