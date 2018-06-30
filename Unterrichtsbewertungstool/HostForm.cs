@@ -25,7 +25,7 @@ namespace Unterrichtsbewertungstool
             btnhost.Enabled = false;                                //Hostbutton deaktivieren
 
             //Beschriften der Elemente
-            cbip.Text = string.Empty;                                                       
+            cbip.Text = string.Empty;
             tbxTitel.Text = "Titel";
             tbxPort.Text = "Port";
             btnhost.Text = "Hosten";
@@ -81,7 +81,8 @@ namespace Unterrichtsbewertungstool
             Server server = new Server(_ip, _port, tbxTitel.Text);  //Initialisieren des Servers
             server.Start();                                         //Starten des Servers
             Client client = new Client(_ip, _port);                 //Initialisieren des Servers
-            ClientForm clientform = new ClientForm(client);         //Clientform Initialisieren
+            String name = client.RequestServerName();               //Servernamen abfragen
+            ClientForm clientform = new ClientForm(client, name);   //Clientform Initialisieren
             this.Visible = false;                                   //Deaktivieren der Aktuellen Form
             clientform.ShowDialog();                                //Zeigen der ClientForm
             server.Stop();                                          //Stoppen des Servers nachdem der Dialog geschlossen wurde

@@ -22,7 +22,7 @@ namespace Unterrichtsbewertungstool
         private Thread _abfrageThread;
         private int _shownMinutesSpan = 30;
 
-        public ClientForm(Client client)
+        public ClientForm(Client client,String title)
         {
             InitializeComponent();
             _client = client;                                                       //Übergabe des Verbundenen Clients
@@ -40,13 +40,13 @@ namespace Unterrichtsbewertungstool
                     _client.SendData(_scrollbarvalue);
                     _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
                     _diagram.Draw();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(500);
                 } while (true);
             });
             _abfrageThread.Start(); 
 
             //Beschriften der Elemente
-            lbldiatitle.Text = "Bewertungen";
+            lbldiatitle.Text = title;
             lblscore.Text = tbscore.Value.ToString();
         }
        
