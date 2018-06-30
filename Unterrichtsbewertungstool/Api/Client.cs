@@ -27,8 +27,12 @@ namespace Unterrichtsbewertungstool
         {
             try
             {
-                tcpServer.Connect(this.serverIp, this.serverPort);
-                _serverTitel = requestServerName();
+                tcpServer = new TcpClient();
+
+                if (!tcpServer.Connected)
+                {
+                    tcpServer.Connect(this.serverIp, this.serverPort);
+                }
                 return true;
             }
             catch (Exception e)
@@ -38,15 +42,33 @@ namespace Unterrichtsbewertungstool
             }
         }
 
+        public Boolean Disconnect()
+        {
+            try
+            {
+                if (tcpServer.Connected)
+                {
+                    tcpServer.Client.Close(100);
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("Failed to disconect to '" + serverIp + "' - " + e);
+                return false;
+            }
+        }
+
         public Dictionary<int, List<Bewertung>> RequestServerData()
         {
-            NetworkStream stream = tcpServer.GetStream();
-            TransferObject sendObj;
+            //NetworkStream stream = tcpServer.GetStream();
+            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST);
             TransferObject receivedObj;
 
-            sendObj = new TransferObject(ExecutableActions.REQUEST);
-            send(stream, sendObj);
-            receivedObj = receive(stream);
+            Connect();
+            send(tcpServer, sendObj);
+            receivedObj = receive(tcpServer);
+            Disconnect();
 
             if (receivedObj.data is Dictionary<int, List<Bewertung>>)
             {
@@ -60,13 +82,13 @@ namespace Unterrichtsbewertungstool
 
         public string requestServerName()
         {
-            NetworkStream stream = tcpServer.GetStream();
-            TransferObject sendObj;
+            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
             TransferObject receivedObj;
 
-            sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
-            send(stream, sendObj);
-            receivedObj = receive(stream);
+            Connect();
+            send(tcpServer, sendObj);
+            receivedObj = receive(tcpServer);
+            Disconnect();
 
             if (receivedObj.data is string)
             {
@@ -82,7 +104,10 @@ namespace Unterrichtsbewertungstool
         public void sendData(int punkte)
         {
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
-            send(tcpServer.GetStream(), sendObj);
+
+            Connect();
+            send(tcpServer, sendObj);
+            Disconnect();
         }
     }
 }

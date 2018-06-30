@@ -55,9 +55,16 @@ namespace Unterrichtsbewertungstool
                     while (isRunning)
                     {
                         Debug.WriteLine("Accepting tcp Client...");
-                        TcpClient client = listener.AcceptTcpClient();
-                        Debug.WriteLine("Accepted client: " + client.ToString());
-                        ThreadPool.QueueUserWorkItem(listen, client);
+                        try
+                        {
+                            TcpClient client = listener.AcceptTcpClient();
+                            Debug.WriteLine("Accepted client: " + client.ToString());
+                            ThreadPool.QueueUserWorkItem(listen, client);
+                        }
+                        catch (SocketException e)
+                        {
+                            Debug.WriteLine("Error while accepting Tcp clients: " + e);
+                        }
                     }
                     listener.Stop();
                 }
@@ -66,23 +73,16 @@ namespace Unterrichtsbewertungstool
 
         private void listen(object clientObject)
         {
-            TcpClient client = (TcpClient) clientObject;
+            Debug.WriteLine("Listening for Data...");
+            TcpClient client = (TcpClient)clientObject;
             NetworkStream stream = client.GetStream();
 
-            if(stream.CanRead && stream.DataAvailable)
-            {
-                TransferObject receivedObj = receive(stream);
-                WaitCallback actionCallback = getActionMethod(receivedObj.action);
-                Action action = new Action(client, receivedObj.data);
+            TransferObject receivedObj = receive(client);
+            WaitCallback actionCallback = getActionMethod(receivedObj.action);
+            Action action = new Action(client, receivedObj.data);
 
-                Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
-                ThreadPool.QueueUserWorkItem(actionCallback, action);
-            }
-            else
-            {
-                client.Close();
-                return;
-            }
+            Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
+            ThreadPool.QueueUserWorkItem(actionCallback, action);
         }
 
         private WaitCallback getActionMethod(ExecutableActions actionToTake)
@@ -90,9 +90,9 @@ namespace Unterrichtsbewertungstool
             switch (actionToTake)
             {
                 case ExecutableActions.SEND:
-                    return sendData;
-                case ExecutableActions.REQUEST:
                     return receiveData;
+                case ExecutableActions.REQUEST:
+                    return sendData;
                 case ExecutableActions.REQUEST_NAME:
                     return sendName;
                 default:
@@ -105,11 +105,10 @@ namespace Unterrichtsbewertungstool
         {
             Action action = (Action)state;
             TcpClient client = action.getClient();
-            NetworkStream stream = client.GetStream();
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, _name);
 
-            send(stream, sendObj);
+            send(client, sendObj);
         }
 
         /// <summary>
@@ -118,20 +117,19 @@ namespace Unterrichtsbewertungstool
         /// <param name="state"></param>
         private void sendData(object state)
         {
-            Action action = (Action) state;
+            Action action = (Action)state;
             TcpClient client = action.getClient();
-            NetworkStream stream = client.GetStream();
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.getBewertungen());
 
-            send(stream, sendObj);
+            send(client, sendObj);
         }
 
         private void receiveData(object state)
         {
-            Action action = (Action) state;
+            Action action = (Action)state;
             TcpClient client = action.getClient();
-            long timeStamp = DateTime.Now.Millisecond;
+            long timeStamp = DateTime.UtcNow.Ticks;
 
             IPEndPoint remoteIpEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
             IPAddress clientIp = remoteIpEndPoint.Address;
