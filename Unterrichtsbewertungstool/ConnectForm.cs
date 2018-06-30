@@ -24,7 +24,7 @@ namespace Unterrichtsbewertungstool
             InitializeComponent();
             btnconnect.Enabled = false;                         //Verbindungsbutton deaktivieren
             StartPosition = FormStartPosition.CenterScreen;     //Startposition Zentrieren
-           
+
             //Beschriften der Elemente
             lblipandport.Text = "IP und Port";
             btnconnect.Text = "Verbinden";
@@ -46,16 +46,15 @@ namespace Unterrichtsbewertungstool
             OperationUtils.TextBoxWaterMarkTextLeave(ref tbxIP, "IP");
         }
 
-
         private void Btnconnect_Click(object sender, EventArgs e)
         {
             //Initialisiert den Client und versucht zu verbinden
             _client = new Client(_ip, _port);
-
+            String name = _client.RequestServerName();
             //Wenn die Verbindung erfolgreich war wird die ClientForm oberfläche angezeigt
             if (_client.Connect())
             {
-                ClientForm diagramform = new ClientForm(_client);
+                ClientForm diagramform = new ClientForm(_client, name);
                 this.Visible = false;
                 diagramform.ShowDialog();
                 this.Visible = true;

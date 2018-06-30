@@ -53,7 +53,7 @@
             this.btnhost.TabIndex = 1;
             this.btnhost.Text = "btnhost";
             this.btnhost.UseVisualStyleBackColor = true;
-            this.btnhost.Click += new System.EventHandler(this.btnhost_Click);
+            this.btnhost.Click += new System.EventHandler(this.Btnhost_Click);
             // 
             // btnconnect
             // 
@@ -64,7 +64,7 @@
             this.btnconnect.TabIndex = 2;
             this.btnconnect.Text = "btnconnect";
             this.btnconnect.UseVisualStyleBackColor = true;
-            this.btnconnect.Click += new System.EventHandler(this.btnconnect_Click);
+            this.btnconnect.Click += new System.EventHandler(this.Btnconnect_Click);
             // 
             // lbltitle2
             // 

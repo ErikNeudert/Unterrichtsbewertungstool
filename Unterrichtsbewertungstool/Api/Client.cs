@@ -9,7 +9,6 @@ namespace Unterrichtsbewertungstool
 {
     public class Client : NetworkComponent
     {
-        private string _serverTitel = "Server";
         private Dictionary<int, List<Bewertung>> diagramData;
         private IPAddress serverIp;
         private TcpClient tcpServer;
@@ -80,7 +79,7 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        public string requestServerName()
+        public string RequestServerName()
         {
             TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
             TransferObject receivedObj;
@@ -101,7 +100,7 @@ namespace Unterrichtsbewertungstool
 
         }
 
-        public void sendData(int punkte)
+        public void SendData(int punkte)
         {
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
 

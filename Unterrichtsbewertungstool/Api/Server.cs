@@ -30,23 +30,23 @@ namespace Unterrichtsbewertungstool
             tcpListener = new TcpListener(serverAddress, port);
         }
 
-        public void start()
+        public void Start()
         {
             Debug.WriteLine("Start listeners");
             //start listeners
-            listenerThread = getListener(tcpListener);
+            listenerThread = GetListener(tcpListener);
             listenerThread.Start();
             //start Workers
         }
 
-        public void stop()
+        public void Stop()
         {
             isRunning = false;
             listenerThread.Join(100);
             tcpListener.Stop();
         }
 
-        private Thread getListener(TcpListener listener)
+        private Thread GetListener(TcpListener listener)
         {
             return new Thread(() =>
                 {
@@ -59,7 +59,7 @@ namespace Unterrichtsbewertungstool
                         {
                             TcpClient client = listener.AcceptTcpClient();
                             Debug.WriteLine("Accepted client: " + client.ToString());
-                            ThreadPool.QueueUserWorkItem(listen, client);
+                            ThreadPool.QueueUserWorkItem(Listen, client);
                         }
                         catch (SocketException e)
                         {
@@ -71,40 +71,40 @@ namespace Unterrichtsbewertungstool
             );
         }
 
-        private void listen(object clientObject)
+        private void Listen(object clientObject)
         {
             Debug.WriteLine("Listening for Data...");
             TcpClient client = (TcpClient)clientObject;
             NetworkStream stream = client.GetStream();
 
             TransferObject receivedObj = receive(client);
-            WaitCallback actionCallback = getActionMethod(receivedObj.action);
+            WaitCallback actionCallback = GetActionMethod(receivedObj.action);
             Action action = new Action(client, receivedObj.data);
 
             Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
             ThreadPool.QueueUserWorkItem(actionCallback, action);
         }
 
-        private WaitCallback getActionMethod(ExecutableActions actionToTake)
+        private WaitCallback GetActionMethod(ExecutableActions actionToTake)
         {
             switch (actionToTake)
             {
                 case ExecutableActions.SEND:
-                    return receiveData;
+                    return ReceiveData;
                 case ExecutableActions.REQUEST:
-                    return sendData;
+                    return SendData;
                 case ExecutableActions.REQUEST_NAME:
-                    return sendName;
+                    return SendName;
                 default:
                     Debug.WriteLine("Unknown Action: " + actionToTake);
                     return null;
             }
         }
 
-        private void sendName(object state)
+        private void SendName(object state)
         {
             Action action = (Action)state;
-            TcpClient client = action.getClient();
+            TcpClient client = action.Client;
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, _name);
 
@@ -115,26 +115,26 @@ namespace Unterrichtsbewertungstool
         /// Sends the data of all clients to the client
         /// </summary>
         /// <param name="state"></param>
-        private void sendData(object state)
+        private void SendData(object state)
         {
             Action action = (Action)state;
-            TcpClient client = action.getClient();
+            TcpClient client = action.Client;
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.getBewertungen());
 
             send(client, sendObj);
         }
 
-        private void receiveData(object state)
+        private void ReceiveData(object state)
         {
             Action action = (Action)state;
-            TcpClient client = action.getClient();
+            TcpClient client = action.Client;
             long timeStamp = DateTime.UtcNow.Ticks;
 
             IPEndPoint remoteIpEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
             IPAddress clientIp = remoteIpEndPoint.Address;
 
-            object dataObject = action.getData();
+            object dataObject = action.Data;
 
             if (dataObject is int)
             {
@@ -158,20 +158,11 @@ namespace Unterrichtsbewertungstool
                 this.dataObject = dataObject;
             }
 
-            public TcpClient getClient()
-            {
-                return client;
-            }
+            public TcpClient Client => client;
 
-            public object getData()
-            {
-                return dataObject;
-            }
+            public object Data => dataObject;
 
-            public void setValue(String value)
-            {
-                this.dataObject = value;
-            }
+            public void SetValue(String value) => this.dataObject = value;
         }
     }
 }

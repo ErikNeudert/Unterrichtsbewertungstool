@@ -17,7 +17,6 @@ namespace Unterrichtsbewertungstool
         //Lokale Variablen
         private int _port = 0;
         private IPAddress _ip = null;
-        private string _title = "";
 
         public HostForm()
         {
@@ -25,17 +24,8 @@ namespace Unterrichtsbewertungstool
             StartPosition = FormStartPosition.CenterScreen;         //Startposition Zentrieren  
             btnhost.Enabled = false;                                //Hostbutton deaktivieren
 
-            IPAddress[] localIPs = Dns.GetHostAddresses(Dns.GetHostName());
-            cbip.Text = string.Empty;
-            foreach (IPAddress addr in localIPs)
-            {
-                if (addr.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    cbip.Items.Add(addr);
-                }
-            }
-
             //Beschriften der Elemente
+            cbip.Text = string.Empty;
             tbxTitel.Text = "Titel";
             tbxPort.Text = "Port";
             btnhost.Text = "Hosten";
@@ -43,32 +33,26 @@ namespace Unterrichtsbewertungstool
             lblIP.Text = "IP";
             lblPort.Text = "Port";
             lblTitle.Text = "Titel";
+
+            //Festlegen der verfügbaren IPs für die CheckBox
+            OperationUtils.AddIPs(ref cbip);
+
+            //Ausrichtungs Einstellung
             tbxTitel.TextAlign = HorizontalAlignment.Left;
             tbxPort.TextAlign = HorizontalAlignment.Left;
+
+            //Watermark Text Farbeinstellung
             tbxTitel.ForeColor = Color.Gray;
             tbxPort.ForeColor = Color.Gray;
-
         }
 
-        private void TbxPort_Enter(object sender, EventArgs e)
-        {
-            //Watermark Text ausblenden(Farbe auf Hellgrau?)
-            // Operations.TextBoxWaterMarkTextEnter(ref tbxPort, "Port");
-        }
-
-        private void TbxPort_Leave(object sender, EventArgs e)
-        {
-            //Watermark Text einblenden(Farbe auf Hellgrau?)
+        private void TbxPort_Leave(object sender, EventArgs e) =>
+            //Watermark Text anzeigen
             OperationUtils.TextBoxWaterMarkTextLeave(ref tbxPort, "Port");
 
-        }
-
-        private void TbxPort_TextChanged(object sender, EventArgs e)
-        {
+        private void TbxPort_TextChanged(object sender, EventArgs e) =>
             //Prüfen ob der Port korrekt ist um den Host Button freizuschalten
             Checkinput();
-
-        }
 
         /// <summary>
         /// Überprüft ob alle Kriterien gegeben sind um den Butten zu Aktivieren. Gültige IP | Gültiger Port | Titel != "" oder "Titel"
@@ -94,48 +78,39 @@ namespace Unterrichtsbewertungstool
 
         private void Btnhost_Click(object sender, EventArgs e)
         {
-            _title = tbxTitel.Text;
-            Server server = new Server(_ip, _port, _title);
-            server.start();
-            Client client = new Client(_ip, _port);
-            ClientForm clientform = new ClientForm(client);
-            this.Visible = false;
-            clientform.ShowDialog();
-            server.stop();
-            this.Visible = true;
+            Server server = new Server(_ip, _port, tbxTitel.Text);  //Initialisieren des Servers
+            server.Start();                                         //Starten des Servers
+            Client client = new Client(_ip, _port);                 //Initialisieren des Servers
+            String name = client.RequestServerName();               //Servernamen abfragen
+            ClientForm clientform = new ClientForm(client, name);   //Clientform Initialisieren
+            this.Visible = false;                                   //Deaktivieren der Aktuellen Form
+            clientform.ShowDialog();                                //Zeigen der ClientForm
+            server.Stop();                                          //Stoppen des Servers nachdem der Dialog geschlossen wurde
+            this.Visible = true;                                    //Aktivieren der Aktuellen Form
         }
 
-        private void TbxPort_KeyDown(object sender, KeyEventArgs e)
-        {
+        private void TbxPort_KeyDown(object sender, KeyEventArgs e) =>
+            //Watermark Text anzeigen
             OperationUtils.TextBoxWaterMarkTextKeyDown(ref tbxPort, "Port");
 
-        }
-
-        private void Cbip_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void Cbip_SelectedIndexChanged(object sender, EventArgs e) =>
+            //Prüfen ob der Port korrekt ist um den Host Button freizuschalten
             Checkinput();
-        }
 
-        private void Cbip_TextChanged(object sender, EventArgs e)
-        {
-            //Verknüpfung der TextBox für die Prüfmethode
+        private void Cbip_TextChanged(object sender, EventArgs e) =>
+            //Prüfen ob der Port korrekt ist um den Host Button freizuschalten
             Checkinput();
-        }
 
-        private void TbxTitel_Leave(object sender, EventArgs e)
-        {
+        private void TbxTitel_Leave(object sender, EventArgs e) =>
+            //Watermark Text anzeigen
             OperationUtils.TextBoxWaterMarkTextLeave(ref tbxTitel, "Titel");
-        }
 
-        private void TbxTitel_KeyDown(object sender, KeyEventArgs e)
-        {
+        private void TbxTitel_KeyDown(object sender, KeyEventArgs e) =>
+            //Watermark Text anzeigen
             OperationUtils.TextBoxWaterMarkTextKeyDown(ref tbxTitel, "Titel");
-        }
 
-        private void tbxTitel_TextChanged(object sender, EventArgs e)
-        {
-            //Verknüpfung der TextBox für die Prüfmethode
+        private void TbxTitel_TextChanged(object sender, EventArgs e) =>
+            //Prüfen ob der Port korrekt ist um den Host Button freizuschalten
             Checkinput();
-        }
     }
 }

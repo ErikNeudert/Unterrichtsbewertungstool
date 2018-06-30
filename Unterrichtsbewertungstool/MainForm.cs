@@ -12,7 +12,6 @@ namespace Unterrichtsbewertungstool
 {
     public partial class MainForm : Form
     {
-        //Lokale Variablen
         public MainForm()
         {
             InitializeComponent();
@@ -25,7 +24,7 @@ namespace Unterrichtsbewertungstool
             btnhost.Text = "Hosten";
         }
 
-        private void btnconnect_Click(object sender, EventArgs e)
+        private void Btnconnect_Click(object sender, EventArgs e)
         {
             //Ausblenden der Aktuellen Form und einblenden der ConnectForm
             //Nach dem Schließen wird die MainForm wieder sichtbar
@@ -35,11 +34,11 @@ namespace Unterrichtsbewertungstool
             this.Visible = true;
         }
 
-        private void btnhost_Click(object sender, EventArgs e)
+        private void Btnhost_Click(object sender, EventArgs e)
         {
             //Ausblenden der Aktuellen Form und einblenden der HostForm
             //Nach dem Schließen wird die MainForm wieder sichtbar
-            HostForm hostdialog = new HostForm();
+            HostForm hostdialog = new HostForm();                   
             this.Visible = false;
             hostdialog.ShowDialog();
             this.Visible = true;

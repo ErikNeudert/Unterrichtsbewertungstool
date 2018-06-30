@@ -10,15 +10,20 @@ namespace Unterrichtsbewertungstool
 {
     class Diagram
     {
+        //Lokale Variablen
         private int _maxdiagramwidth = 400;
         private int _maxdiagramheight = 200;
-
         private int _maxvalue = 0;
         private int _colorindex = 0;
         private List<Color> _linecolors = new List<Color>();
         private Graphics _graphic;
         private Dictionary<int, Point[]> _userpoints = new Dictionary<int, Point[]>();
 
+        /// <summary>
+        /// Initiiert die Farben, legt Kantenglätung fest 
+        /// </summary>
+        /// <param name="maxvalue">Die höchst mögliche Bewertung</param>
+        /// <param name="graphics">Das Grafik objekt auf dem gezeichnet werden soll</param>
         public Diagram(int maxvalue, Graphics graphics)
         {
             _maxvalue = maxvalue;
@@ -27,9 +32,13 @@ namespace Unterrichtsbewertungstool
             _graphic.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         }
 
-
-
-        public void GenerateDiagram(Dictionary<int, List<Bewertung>> userBewertungen, long start, long ende)
+        /// <summary>
+        /// Generiert das Aktuelle Diagramm
+        /// </summary>
+        /// <param name="userBewertungen">Liste an Bewertungen</param>
+        /// <param name="starttime">Startzeit</param>
+        /// <param name="endtime">Endzeit</param>
+        public void GenerateDiagram(Dictionary<int, List<Bewertung>> userBewertungen, long starttime, long endtime)
         {
             _userpoints.Clear();
             foreach (var user in userBewertungen)
@@ -38,19 +47,27 @@ namespace Unterrichtsbewertungstool
                 List<Point> _pointList = new List<Point>();
                 foreach (Bewertung bewertung in user.Value)
                 {
-                    _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, start, ende));
+                    _pointList.Add(GetPointPosition(bewertung.TimeStampTicks, bewertung.Punkte, starttime, endtime));
                 }
                 _userpoints[userId] = _pointList.ToArray();
             }
         }
+
+        /// <summary>
+        /// Zeichnet das Aktuell generierte Diagram
+        /// </summary>
         public void Draw()
         {
+            //Zurücksetzen des Grafikelements 
             _graphic.Clear(Color.LightGray);
-             _colorindex = 0;
+            //Setzt die Farbreihenfolge zurück und Zeichnet mit Linienbreite 2
+            _colorindex = 0;
             Pen pen = new Pen(GetnextColor())
             {
-                Width = 5
+                Width = 2
             };
+
+            //Zeichnet das Aktuelle PointArray
             foreach (Point[] pointArray in _userpoints.Values)
             {
                 if (pointArray.Length == 1)
@@ -66,10 +83,17 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-
-        private Point GetPointPosition(long date, long value, long start, long ende)
+        /// <summary>
+        /// Liefert den Point mit X und Y in abhängigkeit zur Diagramauflösung zurück
+        /// </summary>
+        /// <param name="time">X Achse</param>
+        /// <param name="value">Y Achse</param>
+        /// <param name="start">Startzeit</param>
+        /// <param name="ende">Endzeit</param>
+        /// <returns></returns>
+        private Point GetPointPosition(long time, long value, long start, long ende)
         {
-            int x = (int)((date - start) / ((ende - start) / _maxdiagramwidth));
+            int x = (int)((time - start) / ((ende - start) / _maxdiagramwidth));
             int y = (int)(_maxdiagramheight - value * (_maxdiagramheight / _maxvalue));
             return new Point(x, y);
         }
@@ -101,8 +125,10 @@ namespace Unterrichtsbewertungstool
             _linecolors.Add(Color.IndianRed);
         }
 
-
-
+        /// <summary>
+        /// Liefert die nächste Farbe zurück
+        /// </summary>
+        /// <returns>Color</returns>
         private Color GetnextColor()
         {
             return _linecolors[_colorindex++ % 20];
