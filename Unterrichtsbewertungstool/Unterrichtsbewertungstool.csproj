@@ -44,49 +44,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\Bewertung.cs" />
-    <Compile Include="Api\Client.cs" />
-    <Compile Include="Api\ServerData.cs" />
-    <Compile Include="Api\NetworkComponent.cs" />
-    <Compile Include="Api\Server.cs" />
-    <Compile Include="Diagram.cs" />
-    <Compile Include="OperationUtils.cs" />
-    <Compile Include="ClientForm.cs">
+    <Compile Include="Client\Bewertung.cs" />
+    <Compile Include="Client\Client.cs" />
+    <Compile Include="Server\ServerData.cs" />
+    <Compile Include="Other\NetworkComponent.cs" />
+    <Compile Include="Server\Server.cs" />
+    <Compile Include="Other\Diagram.cs" />
+    <Compile Include="Other\OperationUtils.cs" />
+    <Compile Include="Forms\ClientForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClientForm.Designer.cs">
+    <Compile Include="Forms\ClientForm.Designer.cs">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
+    <Compile Include="Forms\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ConnectForm.cs">
+    <Compile Include="Forms\ConnectForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ConnectForm.Designer.cs">
+    <Compile Include="Forms\ConnectForm.Designer.cs">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="HostForm.cs">
+    <Compile Include="Forms\HostForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="HostForm.Designer.cs">
+    <Compile Include="Forms\HostForm.Designer.cs">
       <DependentUpon>HostForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="Other\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ClientForm.resx">
+    <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
+    <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ConnectForm.resx">
+    <EmbeddedResource Include="Forms\ConnectForm.resx">
       <DependentUpon>ConnectForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="HostForm.resx">
+    <EmbeddedResource Include="Forms\HostForm.resx">
       <DependentUpon>HostForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
