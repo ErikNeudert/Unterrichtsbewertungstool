@@ -27,6 +27,8 @@ namespace Unterrichtsbewertungstool
             try
             {
                 tcpServer = new TcpClient();
+                tcpServer.SendTimeout = 1000;
+                tcpServer.ReceiveTimeout = 1000;
 
                 if (!tcpServer.Connected)
                 {
@@ -47,7 +49,7 @@ namespace Unterrichtsbewertungstool
             {
                 if (tcpServer.Connected)
                 {
-                    tcpServer.Client.Close(100);
+                    tcpServer.Client.Close();
                 }
                 return true;
             }
@@ -69,13 +71,13 @@ namespace Unterrichtsbewertungstool
             receivedObj = receive(tcpServer);
             Disconnect();
 
-            if (receivedObj.data is Dictionary<int, List<Bewertung>>)
+            if (receivedObj.Data is Dictionary<int, List<Bewertung>>)
             {
-                return (Dictionary<int, List<Bewertung>>)receivedObj.data;
+                return (Dictionary<int, List<Bewertung>>)receivedObj.Data;
             }
             else
             {
-                throw new Exception("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.data.GetType());
+                throw new Exception("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.Data.GetType());
             }
         }
 
@@ -89,13 +91,13 @@ namespace Unterrichtsbewertungstool
             receivedObj = receive(tcpServer);
             Disconnect();
 
-            if (receivedObj.data is string)
+            if (receivedObj.Data is string)
             {
-                return (string)receivedObj.data;
+                return (string)receivedObj.Data;
             }
             else
             {
-                throw new Exception("Server didn't return its Name, but: " + receivedObj.data.GetType());
+                throw new Exception("Server didn't return its Name, but: " + receivedObj.Data.GetType());
             }
 
         }

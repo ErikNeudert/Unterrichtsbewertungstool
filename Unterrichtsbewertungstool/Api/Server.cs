@@ -78,8 +78,8 @@ namespace Unterrichtsbewertungstool
             NetworkStream stream = client.GetStream();
 
             TransferObject receivedObj = receive(client);
-            WaitCallback actionCallback = GetActionMethod(receivedObj.action);
-            Action action = new Action(client, receivedObj.data);
+            WaitCallback actionCallback = GetActionMethod(receivedObj.Action);
+            Action action = new Action(client, receivedObj.Data);
 
             Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
             ThreadPool.QueueUserWorkItem(actionCallback, action);
@@ -120,7 +120,7 @@ namespace Unterrichtsbewertungstool
             Action action = (Action)state;
             TcpClient client = action.Client;
             //some clients might get more information than others (switch on client ip...)
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.getBewertungen());
+            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.GetBewertungen());
 
             send(client, sendObj);
         }
@@ -139,7 +139,7 @@ namespace Unterrichtsbewertungstool
             if (dataObject is int)
             {
                 Bewertung bewertung = new Bewertung((int)dataObject, timeStamp);
-                serverData.addBewertung(clientIp, bewertung);
+                serverData.AddBewertung(clientIp, bewertung);
             }
             else
             {

@@ -89,15 +89,15 @@ namespace Unterrichtsbewertungstool
         [Serializable]
         protected class TransferObject
         {
-            public StatusCode status { get; set; }
-            public ExecutableActions action { get; set; }
-            public Object data { get; set; }
+            public StatusCode Status { get; set; }
+            public ExecutableActions Action { get; set; }
+            public Object Data { get; set; }
 
             public TransferObject(ExecutableActions action, Object data, StatusCode status)
             {
-                this.action = action;
-                this.data = data;
-                this.status = status;
+                this.Action = action;
+                this.Data = data;
+                this.Status = status;
             }
 
             public TransferObject(ExecutableActions action, Object data) : this(action, data, StatusCode.OK) { }
