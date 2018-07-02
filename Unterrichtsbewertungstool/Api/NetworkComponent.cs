@@ -15,7 +15,7 @@ namespace Unterrichtsbewertungstool
     {
         protected IFormatter formatter = new BinaryFormatter();
 
-        protected void send(TcpClient tcp, TransferObject obj)
+        protected void Send(TcpClient tcp, TransferObject obj)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        protected TransferObject receive(TcpClient tcp)
+        protected TransferObject Receive(TcpClient tcp)
         {
             try
             {

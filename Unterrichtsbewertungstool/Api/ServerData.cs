@@ -26,8 +26,7 @@ namespace Unterrichtsbewertungstool
 
             if (Data.ContainsKey(address))
             {
-                List<Bewertung> bewertungen;
-                Data.TryGetValue(address, out bewertungen);
+                Data.TryGetValue(address, out List<Bewertung> bewertungen);
                 bewertungen.Add(bewertung);
             }
             else

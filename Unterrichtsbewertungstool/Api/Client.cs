@@ -26,9 +26,11 @@ namespace Unterrichtsbewertungstool
         {
             try
             {
-                tcpServer = new TcpClient();
-                tcpServer.SendTimeout = 1000;
-                tcpServer.ReceiveTimeout = 1000;
+                tcpServer = new TcpClient()
+                {
+                    SendTimeout = 1000,
+                    ReceiveTimeout = 1000
+                };
 
                 if (!tcpServer.Connected)
                 {
@@ -67,8 +69,8 @@ namespace Unterrichtsbewertungstool
             TransferObject receivedObj;
 
             Connect();
-            send(tcpServer, sendObj);
-            receivedObj = receive(tcpServer);
+            Send(tcpServer, sendObj);
+            receivedObj = Receive(tcpServer);
             Disconnect();
 
             if (receivedObj.Data is Dictionary<int, List<Bewertung>>)
@@ -87,8 +89,8 @@ namespace Unterrichtsbewertungstool
             TransferObject receivedObj;
 
             Connect();
-            send(tcpServer, sendObj);
-            receivedObj = receive(tcpServer);
+            Send(tcpServer, sendObj);
+            receivedObj = Receive(tcpServer);
             Disconnect();
 
             if (receivedObj.Data is string)
@@ -107,7 +109,7 @@ namespace Unterrichtsbewertungstool
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
 
             Connect();
-            send(tcpServer, sendObj);
+            Send(tcpServer, sendObj);
             Disconnect();
         }
     }

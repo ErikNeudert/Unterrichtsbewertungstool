@@ -77,7 +77,7 @@ namespace Unterrichtsbewertungstool
             TcpClient client = (TcpClient)clientObject;
             NetworkStream stream = client.GetStream();
 
-            TransferObject receivedObj = receive(client);
+            TransferObject receivedObj = Receive(client);
             WaitCallback actionCallback = GetActionMethod(receivedObj.Action);
             Action action = new Action(client, receivedObj.Data);
 
@@ -108,7 +108,7 @@ namespace Unterrichtsbewertungstool
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, _name);
 
-            send(client, sendObj);
+            Send(client, sendObj);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Unterrichtsbewertungstool
             //some clients might get more information than others (switch on client ip...)
             TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.GetBewertungen());
 
-            send(client, sendObj);
+            Send(client, sendObj);
         }
 
         private void ReceiveData(object state)
