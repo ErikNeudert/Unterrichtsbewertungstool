@@ -8,12 +8,11 @@ namespace Unterrichtsbewertungstool
         public int Punkte { get; private set; }
         public long TimeStampTicks { get; private set; }
 
-        public Bewertung(int punkte, long timeStampTicks)
+        public Bewertung(int Punkte, long TimeStampTicks)
         {
-            this.Punkte = punkte;
-            this.TimeStampTicks = timeStampTicks;
+            this.Punkte = Punkte;
+            this.TimeStampTicks = TimeStampTicks;
         }
-
 
         public override string ToString()
         {

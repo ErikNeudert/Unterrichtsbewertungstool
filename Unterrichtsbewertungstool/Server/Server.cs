@@ -9,16 +9,20 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Unterrichtsbewertungstool;
+using System.IO;
 
 namespace Unterrichtsbewertungstool
 {
+
     public class Server : NetworkComponent
     {
-        //private BlockingCollection<Action> work = new BlockingCollection<Action>();
-        private Boolean isRunning;
-        private Thread listenerThread;
-        private TcpListener tcpListener;
+        private delegate void ServerMethod(TcpClient client, TransferObject obj);
+
         private ServerData serverData = new ServerData();
+        private TcpListener tcpListener;
+        private Thread listenerThread;
+        private int clientThreads = 0;
+        private Boolean isRunning;
         private string _name;
 
         public Server(IPAddress serverAddress, int port, string name)
@@ -30,13 +34,28 @@ namespace Unterrichtsbewertungstool
             tcpListener = new TcpListener(serverAddress, port);
         }
 
+
+        protected override TransferObject Receive(TcpClient client)
+        {
+            NetworkStream stream = client.GetStream();
+
+            while (!stream.DataAvailable)
+            {
+
+                Console.WriteLine("x");
+                Send(client, new TransferObject(TransferCodes.READY));
+                Thread.Sleep(200);
+            }
+
+            return base.Receive(stream);
+        }
+
         public void Start()
         {
             Debug.WriteLine("Start listeners");
             //start listeners
             listenerThread = GetListener(tcpListener);
             listenerThread.Start();
-            //start Workers
         }
 
         public void Stop()
@@ -49,51 +68,85 @@ namespace Unterrichtsbewertungstool
         private Thread GetListener(TcpListener listener)
         {
             return new Thread(() =>
+            {
+                listener.Start();
+                Debug.WriteLine("Started Listener...");
+                //Notifying that he server is running
+                while (isRunning)
                 {
-                    listener.Start();
-                    Debug.WriteLine("Started Listener...");
-                    while (isRunning)
+                    Debug.WriteLine("Accepting tcp Client...");
+                    try
                     {
-                        Debug.WriteLine("Accepting tcp Client...");
-                        try
-                        {
-                            TcpClient client = listener.AcceptTcpClient();
-                            Debug.WriteLine("Accepted client: " + client.ToString());
-                            ThreadPool.QueueUserWorkItem(Listen, client);
-                        }
-                        catch (SocketException e)
-                        {
-                            Debug.WriteLine("Error while accepting Tcp clients: " + e);
-                        }
+                        TcpClient client = listener.AcceptTcpClient();
+                        Debug.WriteLine("Accepted client: " + client.ToString());
+                        GetClientConnectionThread(client).Start();
+                        //ThreadPool.QueueUserWorkItem(Listen, client);
                     }
-                    listener.Stop();
+                    catch (SocketException e)
+                    {
+                        Debug.WriteLine("Error while accepting Tcp clients: " + e);
+                    }
                 }
+                listener.Stop();
+            }
             );
         }
 
-        private void Listen(object clientObject)
+        private Thread GetClientConnectionThread(TcpClient client)
         {
-            Debug.WriteLine("Listening for Data...");
-            TcpClient client = (TcpClient)clientObject;
-            NetworkStream stream = client.GetStream();
+            return new Thread(() =>
+            {
+                try
+                {
+                    clientThreads++;
+                    while (isRunning)
+                    {
+                        lock (client)
+                        {
 
-            TransferObject receivedObj = Receive(client);
-            WaitCallback actionCallback = GetActionMethod(receivedObj.Action);
-            Action action = new Action(client, receivedObj.Data);
+                            Console.WriteLine("y");
+                            Send(client, new TransferObject(TransferCodes.READY));
+                            TransferObject receivedObj = Receive(client);
 
-            Debug.WriteLine("Adding action to work queue: '" + action.ToString() + "'.");
-            ThreadPool.QueueUserWorkItem(actionCallback, action);
+                            //client will send if READY if he expects a value
+                            if (receivedObj.Action == TransferCodes.READY)
+                            {
+                                continue;
+                            }
+                            else if (receivedObj.Action == TransferCodes.NOT_READY)
+                            {
+                                Thread.Sleep(200);
+                                continue;
+                            }
+
+
+                            Console.WriteLine(4);
+                            ServerMethod callback = GetActionMethod(receivedObj.Action);
+                            callback.Invoke(client, receivedObj);
+                        }
+                    }
+                }
+                catch (IOException e)
+                {
+                    Debug.WriteLine("IOException in ClientConnectionThread: " + e.Message);
+                }
+                finally
+                {
+                    clientThreads--;
+                    client.Close();
+                }
+            });
         }
 
-        private WaitCallback GetActionMethod(ExecutableActions actionToTake)
+        private ServerMethod GetActionMethod(TransferCodes actionToTake)
         {
             switch (actionToTake)
             {
-                case ExecutableActions.SEND:
+                case TransferCodes.SEND_DATA:
                     return ReceiveData;
-                case ExecutableActions.REQUEST:
+                case TransferCodes.REQUEST_DATA:
                     return SendData;
-                case ExecutableActions.REQUEST_NAME:
+                case TransferCodes.REQUEST_NAME:
                     return SendName;
                 default:
                     Debug.WriteLine("Unknown Action: " + actionToTake);
@@ -101,13 +154,11 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        private void SendName(object state)
+        private void SendName(TcpClient client, TransferObject obj)
         {
-            Action action = (Action)state;
-            TcpClient client = action.Client;
-            //some clients might get more information than others (switch on client ip...)
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, _name);
+            //Debug.WriteLine("SendName...");
 
+            TransferObject sendObj = new TransferObject(TransferCodes.NAME, _name);
             Send(client, sendObj);
         }
 
@@ -115,54 +166,33 @@ namespace Unterrichtsbewertungstool
         /// Sends the data of all clients to the client
         /// </summary>
         /// <param name="state"></param>
-        private void SendData(object state)
+        private void SendData(TcpClient client, TransferObject obj)
         {
-            Action action = (Action)state;
-            TcpClient client = action.Client;
-            //some clients might get more information than others (switch on client ip...)
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, serverData.GetBewertungen());
+            //Debug.WriteLine("SendData...");
 
+            TransferObject sendObj = new TransferObject(TransferCodes.DATA, serverData.GetBewertungen());
             Send(client, sendObj);
         }
 
-        private void ReceiveData(object state)
+        private void ReceiveData(TcpClient client, TransferObject obj)
         {
-            Action action = (Action)state;
-            TcpClient client = action.Client;
+            //Debug.WriteLine("ReceiveData...");
+
+            IPEndPoint clientKey = client.Client.RemoteEndPoint as IPEndPoint;
             long timeStamp = DateTime.UtcNow.Ticks;
-
-            IPEndPoint remoteIpEndPoint = client.Client.RemoteEndPoint as IPEndPoint;
-            IPAddress clientIp = remoteIpEndPoint.Address;
-
-            object dataObject = action.Data;
+            object dataObject = obj.Data;
 
             if (dataObject is int)
             {
                 Bewertung bewertung = new Bewertung((int)dataObject, timeStamp);
-                serverData.AddBewertung(clientIp, bewertung);
+                serverData.AddBewertung(clientKey, bewertung);
             }
             else
             {
                 Debug.WriteLine("ERROR, Invalid DataObject received. Expected int but was: " + dataObject.GetType());
             }
-        }
 
-        public class Action
-        {
-            TcpClient client;
-            object dataObject;
-
-            public Action(TcpClient client, object dataObject)
-            {
-                this.client = client;
-                this.dataObject = dataObject;
-            }
-
-            public TcpClient Client => client;
-
-            public object Data => dataObject;
-
-            public void SetValue(String value) => this.dataObject = value;
+            Send(client, new TransferObject(TransferCodes.RECEIVED));
         }
     }
 }

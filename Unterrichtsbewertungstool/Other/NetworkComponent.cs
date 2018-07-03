@@ -17,6 +17,9 @@ namespace Unterrichtsbewertungstool
 
         protected void Send(TcpClient tcp, TransferObject obj)
         {
+
+            Console.WriteLine(5);
+            //Debug.WriteLine("Send...");
             try
             {
                 NetworkStream stream = tcp.GetStream();
@@ -44,25 +47,19 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        protected TransferObject Receive(TcpClient tcp)
+        protected virtual TransferObject Receive(NetworkStream stream)
         {
+            //Debug.WriteLine("Receive...");
             try
             {
-                NetworkStream stream = tcp.GetStream();
-
                 using (MemoryStream ms = new MemoryStream())
                 {
                     byte[] data = new byte[1024];
                     int numBytesRead;
 
-                    while (!stream.DataAvailable)
-                    {
-                        Thread.Sleep(200);
-                    }
-
                     do
                     {
-                        stream.ReadTimeout = 5000;
+                        stream.ReadTimeout = 10000;
                         numBytesRead = stream.Read(data, 0, data.Length);
                         ms.Write(data, 0, numBytesRead);
                     }
@@ -72,42 +69,57 @@ namespace Unterrichtsbewertungstool
                     return (TransferObject)formatter.Deserialize(ms);
                 }
             }
-            catch (InvalidOperationException e)
+            catch (IOException e)
             {
-                Debug.WriteLine("Error while sending" + e);
-                return new TransferObject(ExecutableActions.SEND, null, TransferObject.StatusCode.ERROR);
+                return new TransferObject(TransferCodes.NOT_READY);
             }
         }
 
-        protected enum ExecutableActions
+        protected virtual TransferObject Receive(TcpClient client)
         {
-            SEND,
-            REQUEST,
-            REQUEST_NAME
+            return Receive(client.GetStream());
+        }
+
+        //protected bool AreYouThere()
+        //{
+        //    try
+        //    {
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        protected enum TransferCodes
+        {
+            SEND_DATA,
+            RECEIVED,
+
+            REQUEST_DATA,
+            DATA,
+
+            REQUEST_NAME,
+            NAME,
+
+            READY,
+            NOT_READY
         }
 
         [Serializable]
         protected class TransferObject
         {
-            public StatusCode Status { get; set; }
-            public ExecutableActions Action { get; set; }
+            public TransferCodes Action { get; set; }
             public Object Data { get; set; }
 
-            public TransferObject(ExecutableActions action, Object data, StatusCode status)
+            public TransferObject(TransferCodes action, Object data)
             {
                 this.Action = action;
                 this.Data = data;
-                this.Status = status;
             }
 
-            public TransferObject(ExecutableActions action, Object data) : this(action, data, StatusCode.OK) { }
-            public TransferObject(ExecutableActions action) : this(action, null, StatusCode.OK) { }
-
-            public enum StatusCode
-            {
-                OK,
-                ERROR,
-            }
+            public TransferObject(TransferCodes action) : this(action, null) { }
         }
     }
 }

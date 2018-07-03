@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using Unterrichtsbewertungstool;
@@ -10,8 +11,8 @@ namespace Unterrichtsbewertungstool
     public class Client : NetworkComponent
     {
         private Dictionary<int, List<Bewertung>> diagramData;
-        private IPAddress serverIp;
         private TcpClient tcpServer;
+        private IPAddress serverIp;
         private int serverPort;
 
         public Client(IPAddress serverIp, int serverPort)
@@ -22,56 +23,29 @@ namespace Unterrichtsbewertungstool
             diagramData = new Dictionary<int, List<Bewertung>>();
         }
 
-        public Boolean Connect()
+        public void Connect()
         {
-            try
+            if (!tcpServer.Connected)
             {
-                tcpServer = new TcpClient()
-                {
-                    SendTimeout = 1000,
-                    ReceiveTimeout = 1000
-                };
-
-                if (!tcpServer.Connected)
-                {
-                    tcpServer.Connect(this.serverIp, this.serverPort);
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Failed to connect to '" + serverIp + "' - " + e);
-                return false;
+                tcpServer.Connect(this.serverIp, this.serverPort);
             }
         }
 
-        public Boolean Disconnect()
+        public bool isConnected()
         {
-            try
-            {
-                if (tcpServer.Connected)
-                {
-                    tcpServer.Client.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Failed to disconect to '" + serverIp + "' - " + e);
-                return false;
-            }
+            return tcpServer.Connected;
+        }
+
+        public void Disconnect()
+        {
+            tcpServer.Client.Close();
         }
 
         public Dictionary<int, List<Bewertung>> RequestServerData()
         {
             //NetworkStream stream = tcpServer.GetStream();
-            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST);
-            TransferObject receivedObj;
-
-            Connect();
-            Send(tcpServer, sendObj);
-            receivedObj = Receive(tcpServer);
-            Disconnect();
+            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA);
+            TransferObject receivedObj = sendAndReceive(tcpServer, sendObj);
 
             if (receivedObj.Data is Dictionary<int, List<Bewertung>>)
             {
@@ -79,19 +53,15 @@ namespace Unterrichtsbewertungstool
             }
             else
             {
-                throw new Exception("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.Data.GetType());
+                Debug.WriteLine("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.Data.GetType());
+                return null;
             }
         }
 
         public string RequestServerName()
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
-            TransferObject receivedObj;
-
-            Connect();
-            Send(tcpServer, sendObj);
-            receivedObj = Receive(tcpServer);
-            Disconnect();
+            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_NAME);
+            TransferObject receivedObj = sendAndReceive(tcpServer, sendObj);
 
             if (receivedObj.Data is string)
             {
@@ -106,11 +76,37 @@ namespace Unterrichtsbewertungstool
 
         public void SendData(int punkte)
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
+            TransferObject sendObj = new TransferObject(TransferCodes.SEND_DATA, punkte);
+            TransferObject receivedObj = sendAndReceive(tcpServer, sendObj);
 
-            Connect();
-            Send(tcpServer, sendObj);
-            Disconnect();
+            //handle if ! returnes RECEIVED
+        }
+
+        private TransferObject sendAndReceive(TcpClient client, TransferObject obj)
+        {
+            TransferObject receivedObj;
+            TransferObject serverReady;
+
+            lock (tcpServer)
+            {
+
+                Console.WriteLine(2);
+                serverReady = Receive(client);
+
+                if (serverReady.Action != TransferCodes.READY)
+                {
+                    throw new ArgumentOutOfRangeException("Expected 'TransferCodes.READY', actual: '{serverReady.Action}' ");
+                }
+
+
+                Console.WriteLine(3);
+                Send(tcpServer, obj);
+
+                Console.WriteLine(6);
+                receivedObj = Receive(tcpServer);
+            }
+
+            return receivedObj;
         }
     }
 }

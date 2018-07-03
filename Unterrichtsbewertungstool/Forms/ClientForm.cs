@@ -22,8 +22,9 @@ namespace Unterrichtsbewertungstool
         private Client _client;
         private Thread _abfrageThread;
         private int _shownMinutesSpan = 30;
+        private bool isRunning;
 
-        public ClientForm(Client client, String title)
+        public ClientForm(Client client)
         {
             InitializeComponent();
             _client = client;                                                       //Übergabe des Verbundenen Clients
@@ -48,15 +49,34 @@ namespace Unterrichtsbewertungstool
                     catch (Exception e)
                     {
                         Debug.WriteLine("Exception in client abfrageThread: " + e);
-                        return;
+                        if (!_client.isConnected())
+                        {
+                            Stop();
+                        }
                     }
-                } while (true);
+                } while (isRunning);
             });
-            _abfrageThread.Start();
-
             //Beschriften der Elemente
-            lbldiatitle.Text = title;
             lblscore.Text = tbscore.Value.ToString();
+        }
+
+        public void Start()
+        {
+            isRunning = true;
+            _client.Connect();
+            _abfrageThread.Start();
+        }
+
+        public void Stop()
+        {
+            isRunning = false;
+            _client.Disconnect();
+            _abfrageThread.Abort();
+        }
+
+        public void SetName(string name)
+        {
+            lbldiatitle.Text = name;
         }
 
         private void DiagramForm_Paint(object sender, PaintEventArgs e)
