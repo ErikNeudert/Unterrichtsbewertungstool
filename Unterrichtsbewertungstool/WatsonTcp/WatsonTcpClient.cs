@@ -77,7 +77,6 @@ namespace WatsonTcp
             _Client = new TcpClient();
             IAsyncResult ar = _Client.BeginConnect(_ServerIp, _ServerPort, null, null);
             WaitHandle wh = ar.AsyncWaitHandle;
-
             try
             {
                 if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3), false))
@@ -91,16 +90,7 @@ namespace WatsonTcp
                 _SourceIp = ((IPEndPoint)_Client.Client.LocalEndPoint).Address.ToString();
                 _SourcePort = ((IPEndPoint)_Client.Client.LocalEndPoint).Port;
                 _Connected = true;
-            }
-            catch (SocketException)
-            {
-                MessageBox.Show("Verbinden nicht möglich!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
-            }
-            catch (TimeoutException)
-            {
-                MessageBox.Show("Zeitüberschreitung der Anforderung!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
+
             }
             finally
             {
