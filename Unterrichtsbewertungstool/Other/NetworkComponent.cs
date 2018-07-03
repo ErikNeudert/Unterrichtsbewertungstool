@@ -17,9 +17,6 @@ namespace Unterrichtsbewertungstool
 
         protected void Send(TcpClient tcp, TransferObject obj)
         {
-
-            Console.WriteLine(5);
-            //Debug.WriteLine("Send...");
             try
             {
                 NetworkStream stream = tcp.GetStream();
@@ -49,7 +46,6 @@ namespace Unterrichtsbewertungstool
 
         protected virtual TransferObject Receive(NetworkStream stream)
         {
-            //Debug.WriteLine("Receive...");
             try
             {
                 using (MemoryStream ms = new MemoryStream())
