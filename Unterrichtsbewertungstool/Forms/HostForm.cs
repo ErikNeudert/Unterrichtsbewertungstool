@@ -78,15 +78,39 @@ namespace Unterrichtsbewertungstool
 
         private void Btnhost_Click(object sender, EventArgs e)
         {
-            Server server = new Server(_ip, _port, tbxTitel.Text);  //Initialisieren des Servers
-            server.Start();                                         //Starten des Servers
-            Client client = new Client(_ip, _port);                 //Initialisieren des Servers
-            String name = client.RequestServerName();               //Servernamen abfragen
-            ClientForm clientform = new ClientForm(client, name);   //Clientform Initialisieren
-            this.Visible = false;                                   //Deaktivieren der Aktuellen Form
-            clientform.ShowDialog();                                //Zeigen der ClientForm
-            server.Stop();                                          //Stoppen des Servers nachdem der Dialog geschlossen wurde
-            this.Visible = true;                                    //Aktivieren der Aktuellen Form
+            //Initialisieren des Servers und des Clients
+            Server server = new Server(_ip, _port, tbxTitel.Text);
+            Client client = new Client(_ip, _port);
+            ClientForm clientForm = new ClientForm(client);   //Clientform Initialisieren
+            try
+            {
+                //Initialisieren des Servers
+                clientForm.Start();
+
+                //Servernamen abfragen
+                String name = client.RequestServerName();
+                clientForm.SetName(client.name);
+
+                //Deaktivieren der Aktuellen Form
+                this.Visible = false;
+
+                //Zeigen der ClientForm
+                clientForm.ShowDialog();
+
+                //Aktivieren der Aktuellen Form
+                this.Visible = true;
+            }
+            catch (Exception exception)
+            {
+                //Anzeigen einer Fehlermeldung wenn die Verbindung nicht möglich war
+                MessageBox.Show("Aufbau des Servers nicht möglich! Fehler Nachricht: " + exception.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                //Stoppen des Servers nachdem der Dialog geschlossen wurde
+                clientForm.Stop();
+                server.Stop();
+            }
         }
 
         private void TbxPort_KeyDown(object sender, KeyEventArgs e) =>
