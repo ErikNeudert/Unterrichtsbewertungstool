@@ -78,11 +78,8 @@
     <Compile Include="Other\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WatsonTcp\ClientMetadata.cs" />
-    <Compile Include="WatsonTcp\Properties\AssemblyInfo.cs" />
     <Compile Include="WatsonTcp\WatsonTcpClient.cs" />
     <Compile Include="WatsonTcp\WatsonTcpServer.cs" />
-    <Compile Include="WatsonTcp\WatsonTcpSslClient.cs" />
-    <Compile Include="WatsonTcp\WatsonTcpSslServer.cs" />
     <EmbeddedResource Include="Forms\ClientForm.resx">
       <DependentUpon>ClientForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -121,6 +118,7 @@
   <ItemGroup>
     <Content Include="WatsonTcp\WatsonTcp.csproj" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

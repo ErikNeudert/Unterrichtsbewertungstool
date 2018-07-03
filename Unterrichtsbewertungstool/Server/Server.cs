@@ -10,19 +10,18 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using Unterrichtsbewertungstool;
 using System.IO;
+using WatsonTcp;
 
 namespace Unterrichtsbewertungstool
 {
 
     public class Server : NetworkComponent
     {
-        private delegate void ServerMethod(TcpClient client, TransferObject obj);
+        private delegate void ServerMethod(string ipPort, TransferObject obj);
 
-        private ServerData serverData = new ServerData();
-        private TcpListener tcpListener;
-        private Thread listenerThread;
-        private int clientThreads = 0;
-        private Boolean isRunning;
+        private WatsonTcpServer _server;
+        private ServerData _serverData = new ServerData();
+        private Boolean _isRunning;
         private string _name;
 
         public Server(IPAddress serverAddress, int port, string name)
@@ -30,112 +29,36 @@ namespace Unterrichtsbewertungstool
             //initialize
             //set variables
             _name = name;
-            isRunning = true;
-            tcpListener = new TcpListener(serverAddress, port);
+            _isRunning = true;
+            _server = new WatsonTcpServer(serverAddress, port, clientConnected, clientDisconnected, messageReceived, true);
         }
 
-
-        protected override TransferObject Receive(TcpClient client)
+        private bool messageReceived(string ipPort, byte[] msg)
         {
-            NetworkStream stream = client.GetStream();
+            TransferObject obj = (TransferObject)formatter.Deserialize(new MemoryStream(msg));
+            ServerMethod method = GetActionMethod(obj.Action);
 
-            while (!stream.DataAvailable)
-            {
+            method.Invoke(ipPort, obj);
 
-                Console.WriteLine("x");
-                Send(client, new TransferObject(TransferCodes.READY));
-                Thread.Sleep(200);
-            }
-
-            return base.Receive(stream);
+            return true;
         }
 
-        public void Start()
+        private bool clientDisconnected(string ipPort)
         {
-            Debug.WriteLine("Start listeners");
-            //start listeners
-            listenerThread = GetListener(tcpListener);
-            listenerThread.Start();
+            //throw new NotImplementedException();
+            return true;
+        }
+
+        private bool clientConnected(string ipPort)
+        {
+            //throw new NotImplementedException();
+            return true;
         }
 
         public void Stop()
         {
-            isRunning = false;
-            listenerThread.Join(100);
-            tcpListener.Stop();
-        }
-
-        private Thread GetListener(TcpListener listener)
-        {
-            return new Thread(() =>
-            {
-                listener.Start();
-                Debug.WriteLine("Started Listener...");
-                //Notifying that he server is running
-                while (isRunning)
-                {
-                    Debug.WriteLine("Accepting tcp Client...");
-                    try
-                    {
-                        TcpClient client = listener.AcceptTcpClient();
-                        Debug.WriteLine("Accepted client: " + client.ToString());
-                        GetClientConnectionThread(client).Start();
-                        //ThreadPool.QueueUserWorkItem(Listen, client);
-                    }
-                    catch (SocketException e)
-                    {
-                        Debug.WriteLine("Error while accepting Tcp clients: " + e);
-                    }
-                }
-                listener.Stop();
-            }
-            );
-        }
-
-        private Thread GetClientConnectionThread(TcpClient client)
-        {
-            return new Thread(() =>
-            {
-                try
-                {
-                    clientThreads++;
-                    while (isRunning)
-                    {
-                        lock (client)
-                        {
-
-                            Console.WriteLine("y");
-                            Send(client, new TransferObject(TransferCodes.READY));
-                            TransferObject receivedObj = Receive(client);
-
-                            //client will send if READY if he expects a value
-                            if (receivedObj.Action == TransferCodes.READY)
-                            {
-                                continue;
-                            }
-                            else if (receivedObj.Action == TransferCodes.NOT_READY)
-                            {
-                                Thread.Sleep(200);
-                                continue;
-                            }
-
-
-                            Console.WriteLine(4);
-                            ServerMethod callback = GetActionMethod(receivedObj.Action);
-                            callback.Invoke(client, receivedObj);
-                        }
-                    }
-                }
-                catch (IOException e)
-                {
-                    Debug.WriteLine("IOException in ClientConnectionThread: " + e.Message);
-                }
-                finally
-                {
-                    clientThreads--;
-                    client.Close();
-                }
-            });
+            _isRunning = false;
+            _server.Dispose();
         }
 
         private ServerMethod GetActionMethod(TransferCodes actionToTake)
@@ -154,45 +77,49 @@ namespace Unterrichtsbewertungstool
             }
         }
 
-        private void SendName(TcpClient client, TransferObject obj)
+        private void SendName(string ipPort, TransferObject obj)
         {
             //Debug.WriteLine("SendName...");
 
             TransferObject sendObj = new TransferObject(TransferCodes.NAME, _name);
-            Send(client, sendObj);
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, sendObj);
+
+            _server.Send(ipPort, ms.ToArray());
         }
 
         /// <summary>
         /// Sends the data of all clients to the client
         /// </summary>
         /// <param name="state"></param>
-        private void SendData(TcpClient client, TransferObject obj)
+        private void SendData(string ipPort, TransferObject obj)
         {
             //Debug.WriteLine("SendData...");
 
-            TransferObject sendObj = new TransferObject(TransferCodes.DATA, serverData.GetBewertungen());
-            Send(client, sendObj);
+            TransferObject sendObj = new TransferObject(TransferCodes.DATA, _serverData.GetBewertungen());
+
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, sendObj);
+
+            _server.Send(ipPort, ms.ToArray());
         }
 
-        private void ReceiveData(TcpClient client, TransferObject obj)
+        private void ReceiveData(string ipPort, TransferObject obj)
         {
             //Debug.WriteLine("ReceiveData...");
 
-            IPEndPoint clientKey = client.Client.RemoteEndPoint as IPEndPoint;
             long timeStamp = DateTime.UtcNow.Ticks;
             object dataObject = obj.Data;
 
             if (dataObject is int)
             {
                 Bewertung bewertung = new Bewertung((int)dataObject, timeStamp);
-                serverData.AddBewertung(clientKey, bewertung);
+                _serverData.AddBewertung(ipPort, bewertung);
             }
             else
             {
                 Debug.WriteLine("ERROR, Invalid DataObject received. Expected int but was: " + dataObject.GetType());
             }
-
-            Send(client, new TransferObject(TransferCodes.RECEIVED));
         }
     }
 }

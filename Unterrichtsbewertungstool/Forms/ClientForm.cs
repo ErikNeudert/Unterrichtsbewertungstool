@@ -37,23 +37,12 @@ namespace Unterrichtsbewertungstool
                 //Auswählen der Anzuzeigenden Zeitspanne
                 do
                 {
-                    try
-                    {
-                        long now = DateTime.UtcNow.Ticks;
-                        long beginn = now - _shownMinutesSpan * 60 * 1000 * 10000;
-                        _client.SendData(_scrollbarvalue);
-                        _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
-                        _diagram.Draw();
-                        Thread.Sleep(500);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("Exception in client abfrageThread: " + e);
-                        if (!_client.isConnected())
-                        {
-                            Stop();
-                        }
-                    }
+                    long now = DateTime.UtcNow.Ticks;
+                    long beginn = now - _shownMinutesSpan * 60 * 1000 * 10000;
+                    _client.SendData(_scrollbarvalue);
+                    _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
+                    _diagram.Draw();
+                    Thread.Sleep(500);
                 } while (isRunning);
             });
             //Beschriften der Elemente
@@ -63,14 +52,12 @@ namespace Unterrichtsbewertungstool
         public void Start()
         {
             isRunning = true;
-            _client.Connect();
             _abfrageThread.Start();
         }
 
         public void Stop()
         {
             isRunning = false;
-            _client.Disconnect();
             _abfrageThread.Abort();
         }
 

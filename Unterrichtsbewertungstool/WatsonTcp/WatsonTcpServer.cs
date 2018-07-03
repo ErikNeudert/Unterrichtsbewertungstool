@@ -21,11 +21,11 @@ namespace WatsonTcp
         #endregion
 
         #region Private-Members
-         
+
         private bool _Disposed = false;
 
         private bool _Debug;
-        private string _ListenerIp;
+        private IPAddress _ListenerIp;
         private int _ListenerPort;
         private IPAddress _ListenerIpAddress;
         private TcpListener _Listener;
@@ -52,7 +52,7 @@ namespace WatsonTcp
         /// <param name="messageReceived">Function to be called when a message is received.</param>
         /// <param name="debug">Enable or debug logging messages.</param>
         public WatsonTcpServer(
-            string listenerIp,
+            IPAddress listenerIp,
             int listenerPort,
             Func<string, bool> clientConnected,
             Func<string, bool> clientDisconnected,
@@ -73,7 +73,7 @@ namespace WatsonTcp
         /// <param name="messageReceived">Function to be called when a message is received.</param>
         /// <param name="debug">Enable or debug logging messages.</param>
         public WatsonTcpServer(
-            string listenerIp,
+            IPAddress listenerIp,
             int listenerPort,
             IEnumerable<string> permittedIps,
             Func<string, bool> clientConnected,
@@ -97,27 +97,17 @@ namespace WatsonTcp
                 _PermittedIps = new List<string>(permittedIps);
             }
 
-            if (String.IsNullOrEmpty(listenerIp))
-            {
-                _ListenerIpAddress = IPAddress.Any;
-                _ListenerIp = _ListenerIpAddress.ToString();
-            }
-            else
-            {
-                _ListenerIpAddress = IPAddress.Parse(listenerIp);
-                _ListenerIp = listenerIp;
-            }
+            _ListenerIp = listenerIp;
 
             _ListenerPort = listenerPort;
 
             Log("WatsonTcpServer starting on " + _ListenerIp + ":" + _ListenerPort);
 
-            _Listener = new TcpListener(_ListenerIpAddress, _ListenerPort);
+            _Listener = new TcpListener(_ListenerIp, _ListenerPort);
             _TokenSource = new CancellationTokenSource();
             _Token = _TokenSource.Token;
             _ActiveClients = 0;
             _Clients = new ConcurrentDictionary<string, ClientMetadata>();
-
             Task.Run(() => AcceptConnections(), _Token);
         }
 
@@ -309,7 +299,8 @@ namespace WatsonTcp
 
                     Log("*** AcceptConnections accepted connection from " + client.IpPort);
 
-                    Task unawaited = Task.Run(() => {
+                    Task unawaited = Task.Run(() =>
+                    {
                         FinalizeConnection(client);
                     }, _Token);
                 }

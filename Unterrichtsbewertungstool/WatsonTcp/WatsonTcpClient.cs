@@ -23,7 +23,7 @@ namespace WatsonTcp
 
         private string _SourceIp;
         private int _SourcePort;
-        private string _ServerIp;
+        private IPAddress _ServerIp;
         private int _ServerPort;
         private bool _Debug;
         private TcpClient _Client;
@@ -50,18 +50,13 @@ namespace WatsonTcp
         /// <param name="messageReceived">Function to be called when a message is received.</param>
         /// <param name="debug">Enable or debug logging messages.</param>
         public WatsonTcpClient(
-            string serverIp,
+            IPAddress serverIp,
             int serverPort,
             Func<bool> serverConnected,
             Func<bool> serverDisconnected,
             Func<byte[], bool> messageReceived,
             bool debug)
         {
-            if (String.IsNullOrEmpty(serverIp))
-            {
-                throw new ArgumentNullException(nameof(serverIp));
-            }
-
             if (serverPort < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(serverPort));

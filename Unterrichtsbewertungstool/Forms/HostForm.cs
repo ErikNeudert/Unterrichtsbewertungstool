@@ -84,16 +84,12 @@ namespace Unterrichtsbewertungstool
             ClientForm clientForm = new ClientForm(client);   //Clientform Initialisieren
             try
             {
-                //Starten des Servers
-                server.Start();
-
                 //Initialisieren des Servers
                 clientForm.Start();
-                client.Connect();
 
                 //Servernamen abfragen
                 String name = client.RequestServerName();
-                clientForm.SetName(name);
+                clientForm.SetName(client.name);
 
                 //Deaktivieren der Aktuellen Form
                 this.Visible = false;
@@ -111,8 +107,8 @@ namespace Unterrichtsbewertungstool
             }
             finally
             {
-                client.Disconnect();
                 //Stoppen des Servers nachdem der Dialog geschlossen wurde
+                clientForm.Stop();
                 server.Stop();
             }
         }

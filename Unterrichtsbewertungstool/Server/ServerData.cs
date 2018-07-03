@@ -10,14 +10,14 @@ namespace Unterrichtsbewertungstool
 {
     public class ServerData
     {
-        private ConcurrentDictionary<IPEndPoint, List<Bewertung>> Data { get; set; }
+        private ConcurrentDictionary<string, List<Bewertung>> Data { get; set; }
 
         public ServerData()
         {
-            Data = new ConcurrentDictionary<IPEndPoint, List<Bewertung>>();
+            Data = new ConcurrentDictionary<string, List<Bewertung>>();
         }
 
-        public void AddBewertung(IPEndPoint clientKey, Bewertung bewertung)
+        public void AddBewertung(string clientKey, Bewertung bewertung)
         {
             if (clientKey == null)
             {
@@ -35,6 +35,16 @@ namespace Unterrichtsbewertungstool
                 bewertungen.Add(bewertung);
                 Data.TryAdd(clientKey, bewertungen);
             }
+        }
+
+        public void RemoveClient(string clientKey)
+        {
+            if (Data.ContainsKey(clientKey))
+            {
+                List<Bewertung> unusedBewertungen;
+                Data.TryRemove(clientKey, out unusedBewertungen);
+            }
+
         }
 
         public Dictionary<int, List<Bewertung>> GetBewertungen()

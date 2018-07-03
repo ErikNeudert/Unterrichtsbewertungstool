@@ -53,12 +53,11 @@ namespace Unterrichtsbewertungstool
             try
             {
                 //Initialisiert den Client und verbinde
-                _client.Connect();
                 clientForm.Start();
 
                 //Fordert den Servernamen an und setzt ihn in der Applikation
                 String name = _client.RequestServerName();
-                clientForm.SetName(name);
+                clientForm.SetName(_client.name);
 
                 //Zeigt die Clientoberfläche an
                 this.Visible = false;
@@ -72,8 +71,8 @@ namespace Unterrichtsbewertungstool
             }
             finally
             {
+                clientForm.Stop();
                 //Resourcen freigeben
-                _client.Disconnect();
                 this.Visible = true;
             }
         }

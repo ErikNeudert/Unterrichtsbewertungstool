@@ -80,19 +80,7 @@ namespace Unterrichtsbewertungstool
             return Receive(client.GetStream());
         }
 
-        //protected bool AreYouThere()
-        //{
-        //    try
-        //    {
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return false;
-        //    }
-        //}
-
-        protected enum TransferCodes
+        public enum TransferCodes
         {
             SEND_DATA,
             RECEIVED,
