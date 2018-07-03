@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-
+using System.Runtime.InteropServices;
 
 namespace Unterrichtsbewertungstool
 {
@@ -59,7 +59,15 @@ namespace Unterrichtsbewertungstool
         public void Draw()
         {
             //Zurücksetzen des Grafikelements 
-            _graphic.Clear(Color.LightGray);
+            try
+            {
+                _graphic.Clear(Color.LightGray);
+            }
+            catch (ExternalException e)
+            {
+                //Macht manchmal komisches Zeug
+                _graphic.Clear(Color.LightGray);
+            }
             //Setzt die Farbreihenfolge zurück und Zeichnet mit Linienbreite 2
             _colorindex = 0;
             Pen pen = new Pen(GetnextColor())

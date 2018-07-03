@@ -108,7 +108,7 @@ namespace Unterrichtsbewertungstool
         {
             //Debug.WriteLine("ReceiveData...");
 
-            long timeStamp = DateTime.UtcNow.Ticks;
+            long timeStamp = DateTime.Now.Ticks;
             object dataObject = obj.Data;
 
             if (dataObject is int)

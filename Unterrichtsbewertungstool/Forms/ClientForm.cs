@@ -21,7 +21,7 @@ namespace Unterrichtsbewertungstool
         private int _scrollbarvalue = 0;
         private Client _client;
         private Thread _abfrageThread;
-        private int _shownMinutesSpan = 30;
+        private int _shownMinutesSpan = 1;
         private bool isRunning;
 
         public ClientForm(Client client)
@@ -37,16 +37,17 @@ namespace Unterrichtsbewertungstool
                 //Auswählen der Anzuzeigenden Zeitspanne
                 do
                 {
-                    long now = DateTime.UtcNow.Ticks;
-                    long beginn = now - _shownMinutesSpan * 60 * 1000 * 10000;
+                    long now = DateTime.Now.Ticks;
+                    long beginn = now - _shownMinutesSpan * TimeSpan.TicksPerMinute;
                     _client.SendData(_scrollbarvalue);
                     _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
+
                     _diagram.Draw();
                     Thread.Sleep(500);
                 } while (isRunning);
             });
             //Beschriften der Elemente
-            lblscore.Text = tbscore.Value.ToString();
+            lblscore.Text = _scrollbarvalue.ToString();
         }
 
         public void Start()
@@ -83,6 +84,11 @@ namespace Unterrichtsbewertungstool
         {
             //Diagram zeichnen
             _diagram.Draw();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            _shownMinutesSpan = decimal.ToInt32(numericUpDown1.Value);
         }
     }
 }
