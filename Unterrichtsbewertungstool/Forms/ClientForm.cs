@@ -48,6 +48,9 @@ namespace Unterrichtsbewertungstool
             });
             //Beschriften der Elemente
             lblscore.Text = _scrollbarvalue.ToString();
+
+            //Icon festlegen
+            OperationUtils.IconFestlegen(this);
         }
 
         public void Start()

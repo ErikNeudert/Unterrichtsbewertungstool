@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Windows.Forms;
-
+using System.Drawing;
 
 namespace Unterrichtsbewertungstool
 {
-    class OperationUtils
+    internal static class OperationUtils
     {
+        static Icon _icon;
+        
         /// <summary>
         /// Prüft ob der Port eine Zahl und im richtigen Bereich liegt und weist diesen der Referenz zu
         /// </summary>
@@ -29,6 +31,28 @@ namespace Unterrichtsbewertungstool
             }
             return false;
         }
+
+        /// <summary>
+        /// Legt das Icon für die Form fest
+        /// </summary>
+        /// <param name="form">Winows Form</param>
+        public static void IconFestlegen(Form form)
+        {
+            //Icon festlegen
+            if (_icon == null)
+            {
+                try
+                {
+                    _icon = new Icon(@"..\..\..\favicon.ico");
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show(" Icon nicht gefunden!", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            form.Icon = _icon;
+        }
+
         /// <summary>
         /// Fügt die verfügbaren IPs der ComboBox hinzu
         /// </summary>

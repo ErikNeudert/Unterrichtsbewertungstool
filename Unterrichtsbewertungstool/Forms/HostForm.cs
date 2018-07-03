@@ -44,6 +44,9 @@ namespace Unterrichtsbewertungstool
             //Watermark Text Farbeinstellung
             tbxTitel.ForeColor = Color.Gray;
             tbxPort.ForeColor = Color.Gray;
+
+            //Icon festlegen
+            OperationUtils.IconFestlegen(this);
         }
 
         private void TbxPort_Leave(object sender, EventArgs e) =>
