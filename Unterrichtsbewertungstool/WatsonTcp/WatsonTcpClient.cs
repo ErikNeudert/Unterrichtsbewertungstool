@@ -19,7 +19,7 @@ namespace WatsonTcp
         #endregion
 
         #region Private-Members
-         
+
         private bool _Disposed = false;
 
         private string _SourceIp;
@@ -80,7 +80,7 @@ namespace WatsonTcp
 
             try
             {
-                if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false))
+                if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3), false))
                 {
                     _Client.Close();
                     throw new TimeoutException("Timeout connecting to " + _ServerIp + ":" + _ServerPort);
@@ -95,10 +95,12 @@ namespace WatsonTcp
             catch (SocketException)
             {
                 MessageBox.Show("Verbinden nicht möglich!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
             }
             catch (TimeoutException)
             {
                 MessageBox.Show("Zeitüberschreitung der Anforderung!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
             }
             finally
             {
@@ -170,18 +172,25 @@ namespace WatsonTcp
 
             if (disposing)
             {
-                if (_Client != null)
+                try
                 {
-                    if (_Client.Connected)
+                    if (_Client != null)
                     {
-                        NetworkStream ns = _Client.GetStream();
-                        if (ns != null)
+                        if (_Client.Connected)
                         {
-                            ns.Close();
+                            NetworkStream ns = _Client.GetStream();
+                            if (ns != null)
+                            {
+                                ns.Close();
+                            }
                         }
-                    }
 
-                    _Client.Close();
+                        _Client.Close();
+                    }
+                }
+                catch (NullReferenceException)
+                {
+                    //Sollten nicht auftreten, tut es aber. Operator Überladung könnte der Fehler sein.
                 }
 
                 _TokenSource.Cancel();
@@ -226,7 +235,7 @@ namespace WatsonTcp
             return BitConverter.ToString(data).Replace("-", "");
         }
 
-        private async Task DataReceiver(CancellationToken? cancelToken=null)
+        private async Task DataReceiver(CancellationToken? cancelToken = null)
         {
             try
             {

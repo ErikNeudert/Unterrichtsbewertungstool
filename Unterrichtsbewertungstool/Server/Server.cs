@@ -26,7 +26,6 @@ namespace Unterrichtsbewertungstool
 
         public Server(IPAddress serverAddress, int port, string name)
         {
-            //initialize
             //set variables
             _name = name;
             _isRunning = true;

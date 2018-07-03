@@ -90,11 +90,13 @@ namespace Unterrichtsbewertungstool
             TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA);
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);
-            _client.Send(ms.ToArray());
-
-            lock (dataLock)
+            bool sendSuccessfull = _client.Send(ms.ToArray());
+            if (sendSuccessfull)
             {
-                Monitor.Wait(dataLock);
+                lock (dataLock)
+                {
+                    Monitor.Wait(dataLock);
+                }
             }
 
             return bewertungen;
@@ -105,11 +107,14 @@ namespace Unterrichtsbewertungstool
             TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_NAME);
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);
-            _client.Send(ms.ToArray());
+            bool sendSuccessfull = _client.Send(ms.ToArray());
 
-            lock (nameLock)
+            if (sendSuccessfull)
             {
-                Monitor.Wait(nameLock);
+                lock (nameLock)
+                {
+                    Monitor.Wait(nameLock);
+                }
             }
 
             return name;
