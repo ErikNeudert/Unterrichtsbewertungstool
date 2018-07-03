@@ -18,8 +18,8 @@ namespace Unterrichtsbewertungstool
             StartPosition = FormStartPosition.CenterScreen;         //Startposition Zentrieren  
 
             //Beschriften der Elemente
-            lbltitle.Text = "Unterrichts bewertungs";
-            lbltitle2.Text = "T00l";
+            lbltitle.Text = "Unterrichts bewertungs-";
+            lbltitle2.Text = "Tool";
             btnconnect.Text = "Verbinden";
             btnhost.Text = "Hosten";
         }

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WatsonTcp
 {
@@ -91,9 +92,13 @@ namespace WatsonTcp
                 _SourcePort = ((IPEndPoint)_Client.Client.LocalEndPoint).Port;
                 _Connected = true;
             }
-            catch (Exception)
+            catch (SocketException)
             {
-                throw;
+                MessageBox.Show("Verbinden nicht möglich!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("Zeitüberschreitung der Anforderung!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
