@@ -81,9 +81,13 @@ namespace Unterrichtsbewertungstool
             //Initialisieren des Servers und des Clients
             Server server = new Server(_ip, _port, tbxTitel.Text);
             Client client = new Client(_ip, _port);
+
             ClientForm clientForm = new ClientForm(client);   //Clientform Initialisieren
             try
             {
+                server.Start();
+                client.Connect();
+
                 //Initialisieren des Servers
                 clientForm.Start();
 

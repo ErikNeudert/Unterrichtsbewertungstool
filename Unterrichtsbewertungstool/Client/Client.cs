@@ -12,42 +12,59 @@ namespace Unterrichtsbewertungstool
 {
     public class Client : NetworkComponent
     {
+        //Synchronization Locks
         private object nameLock = new object();
         private object dataLock = new object();
-        private Dictionary<int, List<Bewertung>> diagramData;
+
+        public Dictionary<int, List<Bewertung>> bewertungen = new Dictionary<int, List<Bewertung>>();
+        private WatsonTcpClient _client;
         private IPAddress serverIp;
         private int serverPort;
-        private WatsonTcpClient _client;
-        public Dictionary<int, List<Bewertung>> bewertungen = new Dictionary<int, List<Bewertung>>();
+
         public string name = "###";
 
+        /// <summary>
+        /// Initialisiert den Client und baut im hintergrund eine Verbindung zu gegebenem Server auf.
+        /// </summary>
+        /// <param name="serverIp"></param>
+        /// <param name="serverPort"></param>
         public Client(IPAddress serverIp, int serverPort)
         {
             this.serverIp = serverIp;
             this.serverPort = serverPort;
-            diagramData = new Dictionary<int, List<Bewertung>>();
-            _client = new WatsonTcpClient(serverIp, serverPort, serverConnected, serverDisconnected, messageReceived, true);
         }
 
-        private bool messageReceived(byte[] arg)
+        /// <summary>
+        /// Verbindet sich zu dem im Konstruktor definierten Server
+        /// </summary>
+        public void Connect()
         {
+            //Hässlich, jedoch bietet die es nicht besser an
+            _client = new WatsonTcpClient(serverIp, serverPort, ServerConnected, ServerDisconnected, MessageReceived, false);
+        }
+
+        /// <summary>
+        /// Wird ausgeführt wenn der TcpClient eine Nachricht empfängt.
+        /// Entscheidet je nach Inhalt des transferierten Objekts welche Methode ausgeführt wird.
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private bool MessageReceived(byte[] arg)
+        {
+
             TransferObject obj = (TransferObject)formatter.Deserialize(new MemoryStream(arg));
 
             switch (obj.Action)
             {
                 case TransferCodes.DATA:
                     bewertungen = (Dictionary<int, List<Bewertung>>)obj.Data;
-                    lock (dataLock)
-                    {
-                        Monitor.Pulse(dataLock);
-                    }
+                    //Benachrtichtigt das Schloss das der Name gesetzt wurde
+                    lock (dataLock) Monitor.Pulse(dataLock);
                     break;
                 case TransferCodes.NAME:
                     name = (string)obj.Data;
-                    lock (nameLock)
-                    {
-                        Monitor.Pulse(nameLock);
-                    }
+                    //Benachrtichtigt das Schloss das der Name gesetzt wurde
+                    lock (nameLock) Monitor.Pulse(nameLock);
                     break;
                 default:
                     Console.WriteLine("CLient received unhandle Message: " + obj.Action + " - " + obj.Data);
@@ -56,13 +73,13 @@ namespace Unterrichtsbewertungstool
             return true;
         }
 
-        private bool serverDisconnected()
+        private bool ServerDisconnected()
         {
             Console.WriteLine("Server Disconnected.");
             return true;
         }
 
-        private bool serverConnected()
+        private bool ServerConnected()
         {
             Console.WriteLine("Server connected.");
             return true;
@@ -70,7 +87,6 @@ namespace Unterrichtsbewertungstool
 
         public Dictionary<int, List<Bewertung>> RequestServerData()
         {
-            //NetworkStream stream = tcpServer.GetStream();
             TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA);
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);

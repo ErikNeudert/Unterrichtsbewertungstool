@@ -52,6 +52,8 @@ namespace Unterrichtsbewertungstool
             ClientForm clientForm = new ClientForm(_client);
             try
             {
+
+                _client.Connect();
                 //Initialisiert den Client und verbinde
                 clientForm.Start();
 

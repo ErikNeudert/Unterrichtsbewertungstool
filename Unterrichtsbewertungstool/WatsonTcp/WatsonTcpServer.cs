@@ -108,6 +108,10 @@ namespace WatsonTcp
             _Token = _TokenSource.Token;
             _ActiveClients = 0;
             _Clients = new ConcurrentDictionary<string, ClientMetadata>();
+        }
+
+        public void Start()
+        {
             Task.Run(() => AcceptConnections(), _Token);
         }
 
