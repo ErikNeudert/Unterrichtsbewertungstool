@@ -43,7 +43,8 @@ namespace Unterrichtsbewertungstool
             {
                 try
                 {
-                    _icon = new Icon(@"..\..\..\favicon.ico");
+                    _icon = Properties.Resources.favicon;
+                    //_icon = new Icon(@"..\..\..\Unterrichtsbewertungstool\Other\favicon.ico");
                 }
                 catch (Exception)
                 {
