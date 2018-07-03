@@ -38,7 +38,7 @@
             // 
             this.lbltitle.AutoSize = true;
             this.lbltitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbltitle.Location = new System.Drawing.Point(12, 9);
+            this.lbltitle.Location = new System.Drawing.Point(87, 9);
             this.lbltitle.Name = "lbltitle";
             this.lbltitle.Size = new System.Drawing.Size(76, 26);
             this.lbltitle.TabIndex = 0;
@@ -70,13 +70,13 @@
             // 
             this.lbltitle2.AutoSize = true;
             this.lbltitle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbltitle2.Location = new System.Drawing.Point(105, 35);
+            this.lbltitle2.Location = new System.Drawing.Point(57, 35);
             this.lbltitle2.Name = "lbltitle2";
             this.lbltitle2.Size = new System.Drawing.Size(89, 26);
             this.lbltitle2.TabIndex = 3;
             this.lbltitle2.Text = "lbltitle2";
             // 
-            // Form1
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -85,7 +85,7 @@
             this.Controls.Add(this.btnconnect);
             this.Controls.Add(this.btnhost);
             this.Controls.Add(this.lbltitle);
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Bewertungs Tool";
             this.ResumeLayout(false);
             this.PerformLayout();
