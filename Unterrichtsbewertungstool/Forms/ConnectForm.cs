@@ -52,6 +52,8 @@ namespace Unterrichtsbewertungstool
             ClientForm clientForm = new ClientForm(_client);
             try
             {
+
+                _client.Connect();
                 //Initialisiert den Client und verbinde
                 clientForm.Start();
 
@@ -67,7 +69,6 @@ namespace Unterrichtsbewertungstool
             {
                 //Anzeigen einer Fehlermeldung wenn die Verbindung nicht möglich war
                 MessageBox.Show("Verbindung nicht möglich! Fehler Nachricht: " + exception.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
             }
             finally
             {

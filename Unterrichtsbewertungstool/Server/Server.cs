@@ -26,11 +26,15 @@ namespace Unterrichtsbewertungstool
 
         public Server(IPAddress serverAddress, int port, string name)
         {
-            //initialize
             //set variables
             _name = name;
             _isRunning = true;
             _server = new WatsonTcpServer(serverAddress, port, clientConnected, clientDisconnected, messageReceived, true);
+        }
+
+        public void Start()
+        {
+            _server.Start();
         }
 
         private bool messageReceived(string ipPort, byte[] msg)
@@ -45,13 +49,11 @@ namespace Unterrichtsbewertungstool
 
         private bool clientDisconnected(string ipPort)
         {
-            //throw new NotImplementedException();
             return true;
         }
 
         private bool clientConnected(string ipPort)
         {
-            //throw new NotImplementedException();
             return true;
         }
 
@@ -79,8 +81,6 @@ namespace Unterrichtsbewertungstool
 
         private void SendName(string ipPort, TransferObject obj)
         {
-            //Debug.WriteLine("SendName...");
-
             TransferObject sendObj = new TransferObject(TransferCodes.NAME, _name);
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);
@@ -94,8 +94,6 @@ namespace Unterrichtsbewertungstool
         /// <param name="state"></param>
         private void SendData(string ipPort, TransferObject obj)
         {
-            //Debug.WriteLine("SendData...");
-
             TransferObject sendObj = new TransferObject(TransferCodes.DATA, _serverData.GetBewertungen());
 
             MemoryStream ms = new MemoryStream();
@@ -106,8 +104,6 @@ namespace Unterrichtsbewertungstool
 
         private void ReceiveData(string ipPort, TransferObject obj)
         {
-            //Debug.WriteLine("ReceiveData...");
-
             long timeStamp = DateTime.Now.Ticks;
             object dataObject = obj.Data;
 
