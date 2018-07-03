@@ -1,116 +1,110 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using Unterrichtsbewertungstool;
+using WatsonTcp;
 
 namespace Unterrichtsbewertungstool
 {
     public class Client : NetworkComponent
     {
+        private object nameLock = new object();
+        private object dataLock = new object();
         private Dictionary<int, List<Bewertung>> diagramData;
         private IPAddress serverIp;
-        private TcpClient tcpServer;
         private int serverPort;
+        private WatsonTcpClient _client;
+        public Dictionary<int, List<Bewertung>> bewertungen = new Dictionary<int, List<Bewertung>>();
+        public string name = "###";
 
         public Client(IPAddress serverIp, int serverPort)
         {
             this.serverIp = serverIp;
             this.serverPort = serverPort;
-            tcpServer = new TcpClient();
             diagramData = new Dictionary<int, List<Bewertung>>();
+            _client = new WatsonTcpClient(serverIp, serverPort, serverConnected, serverDisconnected, messageReceived, true);
         }
 
-        public Boolean Connect()
+        private bool messageReceived(byte[] arg)
         {
-            try
-            {
-                tcpServer = new TcpClient()
-                {
-                    SendTimeout = 1000,
-                    ReceiveTimeout = 1000
-                };
+            TransferObject obj = (TransferObject)formatter.Deserialize(new MemoryStream(arg));
 
-                if (!tcpServer.Connected)
-                {
-                    tcpServer.Connect(this.serverIp, this.serverPort);
-                }
-                return true;
-            }
-            catch (Exception e)
+            switch (obj.Action)
             {
-                Debug.WriteLine("Failed to connect to '" + serverIp + "' - " + e);
-                return false;
+                case TransferCodes.DATA:
+                    bewertungen = (Dictionary<int, List<Bewertung>>)obj.Data;
+                    lock (dataLock)
+                    {
+                        Monitor.Pulse(dataLock);
+                    }
+                    break;
+                case TransferCodes.NAME:
+                    name = (string)obj.Data;
+                    lock (nameLock)
+                    {
+                        Monitor.Pulse(nameLock);
+                    }
+                    break;
+                default:
+                    Console.WriteLine("CLient received unhandle Message: " + obj.Action + " - " + obj.Data);
+                    break;
             }
+            return true;
         }
 
-        public Boolean Disconnect()
+        private bool serverDisconnected()
         {
-            try
-            {
-                if (tcpServer.Connected)
-                {
-                    tcpServer.Client.Close();
-                }
-                return true;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Failed to disconect to '" + serverIp + "' - " + e);
-                return false;
-            }
+            Console.WriteLine("Server Disconnected.");
+            return true;
+        }
+
+        private bool serverConnected()
+        {
+            Console.WriteLine("Server connected.");
+            return true;
         }
 
         public Dictionary<int, List<Bewertung>> RequestServerData()
         {
             //NetworkStream stream = tcpServer.GetStream();
-            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST);
-            TransferObject receivedObj;
+            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA);
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, sendObj);
+            _client.Send(ms.ToArray());
 
-            Connect();
-            Send(tcpServer, sendObj);
-            receivedObj = Receive(tcpServer);
-            Disconnect();
+            lock (dataLock)
+            {
+                Monitor.Wait(dataLock);
+            }
 
-            if (receivedObj.Data is Dictionary<int, List<Bewertung>>)
-            {
-                return (Dictionary<int, List<Bewertung>>)receivedObj.Data;
-            }
-            else
-            {
-                throw new Exception("Client -> getServerData() -> server didn't return ServerData obj, but: " + receivedObj.Data.GetType());
-            }
+            return bewertungen;
         }
 
         public string RequestServerName()
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.REQUEST_NAME);
-            TransferObject receivedObj;
+            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_NAME);
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, sendObj);
+            _client.Send(ms.ToArray());
 
-            Connect();
-            Send(tcpServer, sendObj);
-            receivedObj = Receive(tcpServer);
-            Disconnect();
-
-            if (receivedObj.Data is string)
+            lock (nameLock)
             {
-                return (string)receivedObj.Data;
-            }
-            else
-            {
-                throw new Exception("Server didn't return its Name, but: " + receivedObj.Data.GetType());
+                Monitor.Wait(nameLock);
             }
 
+            return name;
         }
 
         public void SendData(int punkte)
         {
-            TransferObject sendObj = new TransferObject(ExecutableActions.SEND, punkte);
-
-            Connect();
-            Send(tcpServer, sendObj);
-            Disconnect();
+            TransferObject sendObj = new TransferObject(TransferCodes.SEND_DATA, punkte);
+            MemoryStream ms = new MemoryStream();
+            formatter.Serialize(ms, sendObj);
+            _client.Send(ms.ToArray());
         }
     }
 }

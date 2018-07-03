@@ -21,9 +21,10 @@ namespace Unterrichtsbewertungstool
         private int _scrollbarvalue = 0;
         private Client _client;
         private Thread _abfrageThread;
-        private int _shownMinutesSpan = 30;
+        private int _shownMinutesSpan = 1;
+        private bool isRunning;
 
-        public ClientForm(Client client, String title)
+        public ClientForm(Client client)
         {
             InitializeComponent();
             _client = client;                                                       //Übergabe des Verbundenen Clients
@@ -36,27 +37,34 @@ namespace Unterrichtsbewertungstool
                 //Auswählen der Anzuzeigenden Zeitspanne
                 do
                 {
-                    try
-                    {
-                        long now = DateTime.UtcNow.Ticks;
-                        long beginn = now - _shownMinutesSpan * 60 * 1000 * 10000;
-                        _client.SendData(_scrollbarvalue);
-                        _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
-                        _diagram.Draw();
-                        Thread.Sleep(500);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine("Exception in client abfrageThread: " + e);
-                        return;
-                    }
-                } while (true);
-            });
-            _abfrageThread.Start();
+                    long now = DateTime.Now.Ticks;
+                    long beginn = now - _shownMinutesSpan * TimeSpan.TicksPerMinute;
+                    _client.SendData(_scrollbarvalue);
+                    _diagram.GenerateDiagram(_client.RequestServerData(), beginn, now);
 
+                    _diagram.Draw();
+                    Thread.Sleep(500);
+                } while (isRunning);
+            });
             //Beschriften der Elemente
-            lbldiatitle.Text = title;
-            lblscore.Text = tbscore.Value.ToString();
+            lblscore.Text = _scrollbarvalue.ToString();
+        }
+
+        public void Start()
+        {
+            isRunning = true;
+            _abfrageThread.Start();
+        }
+
+        public void Stop()
+        {
+            isRunning = false;
+            _abfrageThread.Abort();
+        }
+
+        public void SetName(string name)
+        {
+            lbldiatitle.Text = name;
         }
 
         private void DiagramForm_Paint(object sender, PaintEventArgs e)
@@ -76,6 +84,11 @@ namespace Unterrichtsbewertungstool
         {
             //Diagram zeichnen
             _diagram.Draw();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            _shownMinutesSpan = decimal.ToInt32(numericUpDown1.Value);
         }
     }
 }

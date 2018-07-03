@@ -10,41 +10,52 @@ namespace Unterrichtsbewertungstool
 {
     public class ServerData
     {
-        private ConcurrentDictionary<IPAddress, List<Bewertung>> Data { get; set; }
+        private ConcurrentDictionary<string, List<Bewertung>> Data { get; set; }
 
         public ServerData()
         {
-            Data = new ConcurrentDictionary<IPAddress, List<Bewertung>>();
+            Data = new ConcurrentDictionary<string, List<Bewertung>>();
         }
 
-        public void AddBewertung(IPAddress address, Bewertung bewertung)
+        public void AddBewertung(string clientKey, Bewertung bewertung)
         {
-            if (address == null)
+            if (clientKey == null)
             {
-                throw new ArgumentNullException(nameof(address));
+                throw new ArgumentNullException(nameof(clientKey));
             }
 
-            if (Data.ContainsKey(address))
+            if (Data.ContainsKey(clientKey))
             {
-                Data.TryGetValue(address, out List<Bewertung> bewertungen);
+                Data.TryGetValue(clientKey, out List<Bewertung> bewertungen);
                 bewertungen.Add(bewertung);
             }
             else
             {
                 List<Bewertung> bewertungen = new List<Bewertung>();
                 bewertungen.Add(bewertung);
-                Data.TryAdd(address, bewertungen);
+                Data.TryAdd(clientKey, bewertungen);
             }
+        }
+
+        public void RemoveClient(string clientKey)
+        {
+            if (Data.ContainsKey(clientKey))
+            {
+                List<Bewertung> unusedBewertungen;
+                Data.TryRemove(clientKey, out unusedBewertungen);
+            }
+
         }
 
         public Dictionary<int, List<Bewertung>> GetBewertungen()
         {
-            //Should return obfuscated stuff
             Dictionary<int, List<Bewertung>> obfuscatedDict = new Dictionary<int, List<Bewertung>>();
 
             int counter = 0;
-            foreach (List<Bewertung> bewertungen in Data.Values)
+            foreach (var dataPoint in Data)
             {
+                List<Bewertung> bewertungen = dataPoint.Value;
+
                 obfuscatedDict.Add(counter++, bewertungen);
             }
 

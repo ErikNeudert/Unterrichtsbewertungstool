@@ -48,21 +48,32 @@ namespace Unterrichtsbewertungstool
 
         private void Btnconnect_Click(object sender, EventArgs e)
         {
-            //Initialisiert den Client und versucht zu verbinden
             _client = new Client(_ip, _port);
-            String name = _client.RequestServerName();
-            //Wenn die Verbindung erfolgreich war wird die ClientForm oberfläche angezeigt
-            if (_client.Connect())
+            ClientForm clientForm = new ClientForm(_client);
+            try
             {
-                ClientForm diagramform = new ClientForm(_client, name);
+                //Initialisiert den Client und verbinde
+                clientForm.Start();
+
+                //Fordert den Servernamen an und setzt ihn in der Applikation
+                String name = _client.RequestServerName();
+                clientForm.SetName(_client.name);
+
+                //Zeigt die Clientoberfläche an
                 this.Visible = false;
-                diagramform.ShowDialog();
-                this.Visible = true;
+                clientForm.ShowDialog();
             }
-            else
+            catch (Exception exception)
             {
                 //Anzeigen einer Fehlermeldung wenn die Verbindung nicht möglich war
-                MessageBox.Show("Verbindung nicht möglich!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Verbindung nicht möglich! Fehler Nachricht: " + exception.Message, "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+            finally
+            {
+                clientForm.Stop();
+                //Resourcen freigeben
+                this.Visible = true;
             }
         }
 
