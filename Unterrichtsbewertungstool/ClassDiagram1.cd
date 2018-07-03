@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Unterrichtsbewertungstool.ClientForm">
+    <Position X="11.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAACAACAACEAAAAiAACACAIAAIAAAAAAAABDAAIA=</HashCode>
+      <FileName>Forms\ClientForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.ConnectForm">
+    <Position X="9.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACQQAEgAKADgAAACQCSAAAAAAAAgAAgAAAA=</HashCode>
+      <FileName>Forms\ConnectForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.HostForm">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAQBEgACADAAwACICCAgAAQIIAAABAhAAA=</HashCode>
+      <FileName>Forms\HostForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.MainForm">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAACQAAAAAIACAAAACAAAAAAAAAIAAABAAAAA=</HashCode>
+      <FileName>Forms\MainForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.Server">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Unterrichtsbewertungstool.Server.Action">
+        <TypeIdentifier>
+          <NewMemberFileName>Server\Server.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AiAgIAAAAKAAAEBAAABAAgAAAAAAQAAAIAAAEAAAAAA=</HashCode>
+      <FileName>Server\Server.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.ServerData">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAABAAAAAAAQAAAAA=</HashCode>
+      <FileName>Server\ServerData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.Client">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEACAAAIAAAEAAAEAAAIAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Client\Client.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Unterrichtsbewertungstool.Bewertung">
+    <Position X="2.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAEAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Client\Bewertung.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
