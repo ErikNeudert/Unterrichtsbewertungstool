@@ -22,7 +22,6 @@ namespace Unterrichtsbewertungstool
         private Client _client;
         private Thread _abfrageThread;
         private int _shownMinutesSpan = 1;
-        private bool isRunning;
 
         public ClientForm(Client client)
         {
@@ -44,7 +43,7 @@ namespace Unterrichtsbewertungstool
 
                     _diagram.Draw();
                     Thread.Sleep(500);
-                } while (isRunning);
+                } while (client.isRunning);
             });
             //Beschriften der Elemente
             lblscore.Text = _scrollbarvalue.ToString();
@@ -55,13 +54,12 @@ namespace Unterrichtsbewertungstool
 
         public void Start()
         {
-            isRunning = true;
             _abfrageThread.Start();
         }
 
         public void Stop()
         {
-            isRunning = false;
+            _client.isRunning = false;
             _abfrageThread.Abort();
         }
 

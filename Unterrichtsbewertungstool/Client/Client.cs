@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Forms;
 using Unterrichtsbewertungstool;
 using WatsonTcp;
 
@@ -15,6 +16,7 @@ namespace Unterrichtsbewertungstool
         //Synchronization Locks
         private object nameLock = new object();
         private object dataLock = new object();
+        public bool isRunning = false;
 
         public Dictionary<int, List<Bewertung>> bewertungen = new Dictionary<int, List<Bewertung>>();
         private WatsonTcpClient _client;
@@ -39,6 +41,7 @@ namespace Unterrichtsbewertungstool
         /// </summary>
         public void Connect()
         {
+            isRunning = true;
             //Hässlich, jedoch bietet die es nicht besser an
             _client = new WatsonTcpClient(serverIp, serverPort, ServerConnected, ServerDisconnected, MessageReceived, false);
         }
@@ -76,7 +79,9 @@ namespace Unterrichtsbewertungstool
         private bool ServerDisconnected()
         {
             Console.WriteLine("Server Disconnected.");
-            return true;
+            isRunning = false;
+            MessageBox.Show("Die Verbindung zum Server ist abgebrochen.", "Server Disconnected", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
         }
 
         private bool ServerConnected()
