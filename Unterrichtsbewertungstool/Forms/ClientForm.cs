@@ -28,6 +28,7 @@ namespace Unterrichtsbewertungstool
             InitializeComponent();
             _client = client;                                                       //Übergabe des Verbundenen Clients
             StartPosition = FormStartPosition.CenterScreen;                         //Zentrieren der Fensterposition
+            tbscore.Maximum = 100;                                                  //Maximalen wert der Trackbar anpassen
             _diagram = new Diagram(tbscore.Maximum, pbdiagram.CreateGraphics());    //Diagram Initialisieren
 
             //Thread Initialiseren und starten
@@ -79,7 +80,7 @@ namespace Unterrichtsbewertungstool
         {
             //Verändern der anzeige und anpassen der Aktuellen bewertungszahl
             _scrollbarvalue = tbscore.Value;
-            lblscore.Text = (_scrollbarvalue*4).ToString();
+            lblscore.Text = (_scrollbarvalue).ToString();
         }
 
         private void Pbdiagram_Paint(object sender, PaintEventArgs e)
