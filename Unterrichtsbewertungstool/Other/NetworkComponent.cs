@@ -65,7 +65,7 @@ namespace Unterrichtsbewertungstool
                     return (TransferObject)formatter.Deserialize(ms);
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 return new TransferObject(TransferCodes.NOT_READY);
             }

@@ -63,7 +63,7 @@ namespace Unterrichtsbewertungstool
             {
                 _graphic.Clear(Color.LightGray);
             }
-            catch (ExternalException e)
+            catch (ExternalException)
             {
                 //Macht manchmal komisches Zeug
                 _graphic.Clear(Color.LightGray);

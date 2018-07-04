@@ -27,7 +27,6 @@ namespace WatsonTcp
         private bool _Debug;
         private IPAddress _ListenerIp;
         private int _ListenerPort;
-        private IPAddress _ListenerIpAddress;
         private TcpListener _Listener;
         private int _ActiveClients;
         private ConcurrentDictionary<string, ClientMetadata> _Clients;

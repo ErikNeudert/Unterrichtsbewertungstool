@@ -119,10 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Other\favicon.ico" />
-    <None Include="Resources\Icon1.ico" />
-    <None Include="Resources\favicon %281%29.ico" />
-    <None Include="Resources\favicon %282%29.ico" />
-    <None Include="Resources\favicon %283%29.ico" />
     <None Include="Resources\favicon %284%29.ico" />
     <Content Include="WatsonTcp\WatsonTcp.csproj" />
   </ItemGroup>

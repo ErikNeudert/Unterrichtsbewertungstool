@@ -48,6 +48,7 @@ namespace Unterrichtsbewertungstool
             });
             //Beschriften der Elemente
             lblscore.Text = _scrollbarvalue.ToString();
+            lblzeitspanne.Text = "Zeitspanne (min):";
 
             //Icon festlegen
             OperationUtils.IconFestlegen(this);
@@ -80,7 +81,7 @@ namespace Unterrichtsbewertungstool
         {
             //Verändern der anzeige und anpassen der Aktuellen bewertungszahl
             _scrollbarvalue = tbscore.Value;
-            lblscore.Text = _scrollbarvalue.ToString();
+            lblscore.Text = (_scrollbarvalue*4).ToString();
         }
 
         private void Pbdiagram_Paint(object sender, PaintEventArgs e)
@@ -89,7 +90,7 @@ namespace Unterrichtsbewertungstool
             _diagram.Draw();
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             _shownMinutesSpan = decimal.ToInt32(numericUpDown1.Value);
         }

@@ -21,15 +21,13 @@ namespace Unterrichtsbewertungstool
 
         private WatsonTcpServer _server;
         private ServerData _serverData = new ServerData();
-        private Boolean _isRunning;
         private string _name;
 
         public Server(IPAddress serverAddress, int port, string name)
         {
             //set variables
             _name = name;
-            _isRunning = true;
-            _server = new WatsonTcpServer(serverAddress, port, clientConnected, clientDisconnected, messageReceived, true);
+            _server = new WatsonTcpServer(serverAddress, port, ClientConnected, ClientDisconnected, MessageReceived, true);
         }
 
         public void Start()
@@ -37,7 +35,7 @@ namespace Unterrichtsbewertungstool
             _server.Start();
         }
 
-        private bool messageReceived(string ipPort, byte[] msg)
+        private bool MessageReceived(string ipPort, byte[] msg)
         {
             TransferObject obj = (TransferObject)formatter.Deserialize(new MemoryStream(msg));
             ServerMethod method = GetActionMethod(obj.Action);
@@ -47,19 +45,18 @@ namespace Unterrichtsbewertungstool
             return true;
         }
 
-        private bool clientDisconnected(string ipPort)
+        private bool ClientDisconnected(string ipPort)
         {
             return true;
         }
 
-        private bool clientConnected(string ipPort)
+        private bool ClientConnected(string ipPort)
         {
             return true;
         }
 
         public void Stop()
         {
-            _isRunning = false;
             _server.Dispose();
         }
 
