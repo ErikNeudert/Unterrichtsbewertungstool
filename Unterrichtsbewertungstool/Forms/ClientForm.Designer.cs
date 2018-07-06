@@ -68,7 +68,6 @@
             this.pbdiagram.Size = new System.Drawing.Size(400, 200);
             this.pbdiagram.TabIndex = 3;
             this.pbdiagram.TabStop = false;
-            this.pbdiagram.Paint += new System.Windows.Forms.PaintEventHandler(this.Pbdiagram_Paint);
             // 
             // lbldiatitle
             // 
@@ -122,7 +121,6 @@
             this.Controls.Add(this.tbscore);
             this.Name = "ClientForm";
             this.Text = "Statistik";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.DiagramForm_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.tbscore)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbdiagram)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

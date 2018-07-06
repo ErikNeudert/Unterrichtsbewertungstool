@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Unterrichtsbewertungstool
 {
@@ -61,33 +62,35 @@ namespace Unterrichtsbewertungstool
             //Zurücksetzen des Grafikelements 
             try
             {
+                //Fehler passieren nur selten, haben kaum Auswirkung und sollen ignoriert werden.
                 _graphic.Clear(Color.LightGray);
+
+                //Setzt die Farbreihenfolge zurück und Zeichnet mit Linienbreite 2
+                _colorindex = 0;
+                Pen pen = new Pen(GetnextColor())
+                {
+                    Width = 2
+                };
+
+                //Zeichnet das Aktuelle PointArray
+                foreach (Point[] pointArray in _userpoints.Values)
+                {
+                    if (pointArray.Length == 1)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        _graphic.DrawLines(pen, pointArray);
+                        pen.Width = 2;
+                        pen.Color = GetnextColor();
+                    }
+                }
             }
-            catch (ExternalException)
+            catch (Exception e)
             {
                 //Macht manchmal komisches Zeug
-                _graphic.Clear(Color.LightGray);
-            }
-            //Setzt die Farbreihenfolge zurück und Zeichnet mit Linienbreite 2
-            _colorindex = 0;
-            Pen pen = new Pen(GetnextColor())
-            {
-                Width = 2
-            };
-
-            //Zeichnet das Aktuelle PointArray
-            foreach (Point[] pointArray in _userpoints.Values)
-            {
-                if (pointArray.Length == 1)
-                {
-                    continue;
-                }
-                else
-                {
-                    _graphic.DrawLines(pen, pointArray);
-                    pen.Width = 2;
-                    pen.Color = GetnextColor();
-                }
+                Debug.WriteLine("Fehler beim Zeichnen (wird irgnoriert, da es bei häufigen Aufrufen manchmal vorkommt): " + e);
             }
         }
 

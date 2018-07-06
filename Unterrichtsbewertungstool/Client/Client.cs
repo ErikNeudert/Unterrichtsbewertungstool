@@ -100,7 +100,7 @@ namespace Unterrichtsbewertungstool
             {
                 lock (dataLock)
                 {
-                    Monitor.Wait(dataLock);
+                    Monitor.Wait(dataLock, 3000);
                 }
             }
 
@@ -118,7 +118,7 @@ namespace Unterrichtsbewertungstool
             {
                 lock (nameLock)
                 {
-                    Monitor.Wait(nameLock);
+                    Monitor.Wait(nameLock, 3000);
                 }
             }
 

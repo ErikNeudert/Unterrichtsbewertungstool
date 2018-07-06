@@ -28,7 +28,6 @@ namespace Unterrichtsbewertungstool
             InitializeComponent();
             _client = client;                                                       //Übergabe des Verbundenen Clients
             StartPosition = FormStartPosition.CenterScreen;                         //Zentrieren der Fensterposition
-            tbscore.Maximum = 100;                                                  //Maximalen wert der Trackbar anpassen
             _diagram = new Diagram(tbscore.Maximum, pbdiagram.CreateGraphics());    //Diagram Initialisieren
 
             //Thread Initialiseren und starten
@@ -70,23 +69,11 @@ namespace Unterrichtsbewertungstool
             lbldiatitle.Text = name;
         }
 
-        private void DiagramForm_Paint(object sender, PaintEventArgs e)
-        {
-            //Diagram zeichnen
-            _diagram.Draw();
-        }
-
         private void Tbscore_Scroll(object sender, EventArgs e)
         {
             //Verändern der anzeige und anpassen der Aktuellen bewertungszahl
             _scrollbarvalue = tbscore.Value;
             lblscore.Text = (_scrollbarvalue).ToString();
-        }
-
-        private void Pbdiagram_Paint(object sender, PaintEventArgs e)
-        {
-            //Diagram zeichnen
-            _diagram.Draw();
         }
 
         private void NumericUpDown1_ValueChanged(object sender, EventArgs e)
