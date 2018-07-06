@@ -90,9 +90,9 @@ namespace Unterrichtsbewertungstool
             return true;
         }
 
-        public Dictionary<int, List<Bewertung>> RequestServerData()
+        public Dictionary<int, List<Bewertung>> RequestServerData(long ticks)
         {
-            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA);
+            TransferObject sendObj = new TransferObject(TransferCodes.REQUEST_DATA, ticks);
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);
             bool sendSuccessfull = _client.Send(ms.ToArray());

@@ -2,6 +2,10 @@
 
 namespace Unterrichtsbewertungstool
 {
+    /// <summary>
+    /// Representiert eine Nutzerbewertung.
+    /// Kann den Zeitpunkt und die Punkte der Bewertung festhalten
+    /// </summary>
     [Serializable]
     public class Bewertung
     {

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Client\Bewertung.cs" />
     <Compile Include="Client\Client.cs" />
+    <Compile Include="Server\ClientData.cs" />
     <Compile Include="Server\ServerData.cs" />
     <Compile Include="Other\NetworkComponent.cs" />
     <Compile Include="Server\Server.cs" />

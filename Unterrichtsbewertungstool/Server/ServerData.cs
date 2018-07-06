@@ -10,11 +10,11 @@ namespace Unterrichtsbewertungstool
 {
     public class ServerData
     {
-        private ConcurrentDictionary<string, List<Bewertung>> Data { get; set; }
+        private ConcurrentDictionary<string, ClientData> Data { get; set; }
 
         public ServerData()
         {
-            Data = new ConcurrentDictionary<string, List<Bewertung>>();
+            Data = new ConcurrentDictionary<string, ClientData>();
         }
 
         public void AddBewertung(string clientKey, Bewertung bewertung)
@@ -26,14 +26,14 @@ namespace Unterrichtsbewertungstool
 
             if (Data.ContainsKey(clientKey))
             {
-                Data.TryGetValue(clientKey, out List<Bewertung> bewertungen);
-                bewertungen.Add(bewertung);
+                Data.TryGetValue(clientKey, out ClientData cdata);
+                cdata.bewertungen.Add(bewertung);
             }
             else
             {
-                List<Bewertung> bewertungen = new List<Bewertung>();
-                bewertungen.Add(bewertung);
-                Data.TryAdd(clientKey, bewertungen);
+                ClientData cdata = new ClientData();
+                cdata.bewertungen.Add(bewertung);
+                Data.TryAdd(clientKey, cdata);
             }
         }
 
@@ -41,20 +41,19 @@ namespace Unterrichtsbewertungstool
         {
             if (Data.ContainsKey(clientKey))
             {
-                List<Bewertung> unusedBewertungen;
-                Data.TryRemove(clientKey, out unusedBewertungen);
+                Data.TryRemove(clientKey, out ClientData unused);
             }
 
         }
 
-        public Dictionary<int, List<Bewertung>> GetBewertungen()
+        public Dictionary<int, List<Bewertung>> GetBewertungen(string ipPort, long ticks)
         {
             Dictionary<int, List<Bewertung>> obfuscatedDict = new Dictionary<int, List<Bewertung>>();
 
             int counter = 0;
             foreach (var dataPoint in Data)
             {
-                List<Bewertung> bewertungen = dataPoint.Value;
+                List<Bewertung> bewertungen = dataPoint.Value.getBewertungen(ticks);
 
                 obfuscatedDict.Add(counter++, bewertungen);
             }

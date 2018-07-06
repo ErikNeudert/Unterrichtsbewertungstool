@@ -91,7 +91,9 @@ namespace Unterrichtsbewertungstool
         /// <param name="state"></param>
         private void SendData(string ipPort, TransferObject obj)
         {
-            TransferObject sendObj = new TransferObject(TransferCodes.DATA, _serverData.GetBewertungen());
+            long fromTicks = (long) obj.Data;
+            var bewertungen = _serverData.GetBewertungen(ipPort, fromTicks);
+            TransferObject sendObj = new TransferObject(TransferCodes.DATA, bewertungen);
 
             MemoryStream ms = new MemoryStream();
             formatter.Serialize(ms, sendObj);
