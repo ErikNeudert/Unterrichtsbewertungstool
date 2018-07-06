@@ -11,10 +11,21 @@ using System.Threading;
 
 namespace Unterrichtsbewertungstool
 {
+    /// <summary>
+    /// Repräsentiert Netzwerkbestandteil.
+    /// </summary>
     public abstract class NetworkComponent
     {
+        /// <summary>
+        /// Der serialisierer mit dem die versendeten Daten serialisiert werden
+        /// </summary>
         protected IFormatter formatter = new BinaryFormatter();
 
+        /// <summary>
+        /// Sendet dem TcpClient das <see cref="TransferObject"/>.
+        /// </summary>
+        /// <param name="tcp">Der Empfänger</param>
+        /// <param name="obj">Die Daten</param>
         protected void Send(TcpClient tcp, TransferObject obj)
         {
             try
@@ -23,12 +34,14 @@ namespace Unterrichtsbewertungstool
 
                 using (MemoryStream ms = new MemoryStream())
                 {
+                    //Daten serilisierung
                     formatter.Serialize(ms, obj);
                     ms.Position = 0;
 
                     byte[] sendBuffer = new byte[1024];
                     int numBytesRead;
 
+                    //Daten päckchenweiße verschicken
                     do
                     {
                         numBytesRead = ms.Read(sendBuffer, 0, sendBuffer.Length);
@@ -44,6 +57,12 @@ namespace Unterrichtsbewertungstool
             }
         }
 
+        /// <summary>
+        /// Empfängt von gegebenem Stream das <see cref="TransferObject"/>.
+        /// Wartet bis zu 10 Sekunden auf Daten
+        /// </summary>
+        /// <param name="stream">Der Stream von dem die Daten gelesen werden können</param>
+        /// <returns></returns>
         protected virtual TransferObject Receive(NetworkStream stream)
         {
             try
@@ -53,6 +72,7 @@ namespace Unterrichtsbewertungstool
                     byte[] data = new byte[1024];
                     int numBytesRead;
 
+                    //Daten päckchenweiße lesen
                     do
                     {
                         stream.ReadTimeout = 10000;
@@ -62,21 +82,31 @@ namespace Unterrichtsbewertungstool
                     while (numBytesRead == data.Length);
                     ms.Position = 0;
 
+                    //Daten deserialisieren
                     return (TransferObject)formatter.Deserialize(ms);
                 }
             }
             catch (IOException)
             {
-                return new TransferObject(TransferCodes.NOT_READY);
+                return new TransferObject(TransferCode.NOT_READY);
             }
         }
 
+        /// <summary>
+        /// Wrapper Methode für <see cref="Receive(NetworkStream)"/>
+        /// </summary>
+        /// <param name="client">DerClient von dessen Stream die Daten gelesen werden.</param>
+        /// <returns></returns>
         protected virtual TransferObject Receive(TcpClient client)
         {
             return Receive(client.GetStream());
         }
 
-        public enum TransferCodes
+        /// <summary>
+        /// Die möglichen Transfercodes.
+        /// Davon hängt ab wie das <see cref="TransferObject"/> verarbeitet wird.
+        /// </summary>
+        public enum TransferCode
         {
             SEND_DATA,
             RECEIVED,
@@ -91,19 +121,29 @@ namespace Unterrichtsbewertungstool
             NOT_READY
         }
 
+        /// <summary>
+        /// Objekt das die Daten hält.
+        /// </summary>
         [Serializable]
         protected class TransferObject
         {
-            public TransferCodes Action { get; set; }
+            /// <summary>
+            /// Die Aktion die mit den enthaltenen Daten ausgeführt werden soll
+            /// </summary>
+            public TransferCode Action { get; set; }
+            /// <summary>
+            /// Die Daten.
+            /// Können Null sein.
+            /// </summary>
             public Object Data { get; set; }
 
-            public TransferObject(TransferCodes action, Object data)
+            public TransferObject(TransferCode action, Object data)
             {
                 this.Action = action;
                 this.Data = data;
             }
 
-            public TransferObject(TransferCodes action) : this(action, null) { }
+            public TransferObject(TransferCode action) : this(action, null) { }
         }
     }
 }

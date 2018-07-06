@@ -96,7 +96,7 @@ namespace Unterrichtsbewertungstool
 
                 //Servernamen abfragen
                 String name = client.RequestServerName();
-                clientForm.SetName(client.name);
+                clientForm.SetName(client.serverName);
 
                 //Deaktivieren der Aktuellen Form
                 this.Visible = false;

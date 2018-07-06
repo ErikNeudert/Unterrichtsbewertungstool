@@ -12,6 +12,9 @@ using System.Net.Sockets;
 
 namespace Unterrichtsbewertungstool
 {
+    /// <summary>
+    /// Dialog mit dem die Verbindung zu einem Server eingeleitet werden kann.
+    /// </summary>
     public partial class ConnectForm : Form
     {
         //Lokale variablen
@@ -62,7 +65,7 @@ namespace Unterrichtsbewertungstool
 
                 //Fordert den Servernamen an und setzt ihn in der Applikation
                 String name = _client.RequestServerName();
-                clientForm.SetName(_client.name);
+                clientForm.SetName(_client.serverName);
 
                 //Zeigt die Clientoberfläche an
                 this.Visible = false;

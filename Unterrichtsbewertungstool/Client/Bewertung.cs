@@ -4,12 +4,15 @@ namespace Unterrichtsbewertungstool
 {
     /// <summary>
     /// Representiert eine Nutzerbewertung.
-    /// Kann den Zeitpunkt und die Punkte der Bewertung festhalten
+    /// Wird verwendet um den Zeitpunkt und die Punkte der Bewertung festhalten
     /// </summary>
     [Serializable]
     public class Bewertung
     {
         public int Punkte { get; private set; }
+        /// <summary>
+        /// Der Zeitpunkt der Bewertung, angegeben in Ticks (DateTime.Now.Ticks)
+        /// </summary>
         public long TimeStampTicks { get; private set; }
 
         public Bewertung(int Punkte, long TimeStampTicks)
