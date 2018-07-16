@@ -41,12 +41,12 @@
             // 
             // tbscore
             // 
-            this.tbscore.Location = new System.Drawing.Point(675, 75);
-            this.tbscore.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tbscore.Location = new System.Drawing.Point(600, 60);
+            this.tbscore.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tbscore.Maximum = 25;
             this.tbscore.Name = "tbscore";
             this.tbscore.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.tbscore.Size = new System.Drawing.Size(56, 338);
+            this.tbscore.Size = new System.Drawing.Size(56, 270);
             this.tbscore.TabIndex = 0;
             this.tbscore.Scroll += new System.EventHandler(this.Tbscore_Scroll);
             // 
@@ -54,21 +54,21 @@
             // 
             this.lblscore.AutoSize = true;
             this.lblscore.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblscore.Location = new System.Drawing.Point(690, 46);
+            this.lblscore.Location = new System.Drawing.Point(613, 37);
             this.lblscore.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblscore.Name = "lblscore";
-            this.lblscore.Size = new System.Drawing.Size(79, 25);
+            this.lblscore.Size = new System.Drawing.Size(23, 25);
             this.lblscore.TabIndex = 2;
-            this.lblscore.Text = "lblscore";
+            this.lblscore.Text = "0";
             // 
             // pbdiagram
             // 
             this.pbdiagram.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pbdiagram.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbdiagram.Location = new System.Drawing.Point(68, 91);
-            this.pbdiagram.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.pbdiagram.Location = new System.Drawing.Point(60, 73);
+            this.pbdiagram.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.pbdiagram.Name = "pbdiagram";
-            this.pbdiagram.Size = new System.Drawing.Size(599, 307);
+            this.pbdiagram.Size = new System.Drawing.Size(533, 246);
             this.pbdiagram.TabIndex = 3;
             this.pbdiagram.TabStop = false;
             // 
@@ -76,7 +76,7 @@
             // 
             this.lbldiatitle.AutoSize = true;
             this.lbldiatitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbldiatitle.Location = new System.Drawing.Point(60, 46);
+            this.lbldiatitle.Location = new System.Drawing.Point(53, 37);
             this.lbldiatitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lbldiatitle.Name = "lbldiatitle";
             this.lbldiatitle.Size = new System.Drawing.Size(128, 31);
@@ -85,14 +85,15 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(362, 406);
+            this.numericUpDown1.Location = new System.Drawing.Point(322, 325);
+            this.numericUpDown1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.numericUpDown1.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 26);
+            this.numericUpDown1.Size = new System.Drawing.Size(107, 22);
             this.numericUpDown1.TabIndex = 5;
             this.numericUpDown1.Value = new decimal(new int[] {
             1,
@@ -104,24 +105,24 @@
             // lblzeitspanne
             // 
             this.lblzeitspanne.AutoSize = true;
-            this.lblzeitspanne.Location = new System.Drawing.Point(221, 409);
+            this.lblzeitspanne.Location = new System.Drawing.Point(196, 327);
             this.lblzeitspanne.Name = "lblzeitspanne";
-            this.lblzeitspanne.Size = new System.Drawing.Size(139, 20);
+            this.lblzeitspanne.Size = new System.Drawing.Size(119, 17);
             this.lblzeitspanne.TabIndex = 6;
             this.lblzeitspanne.Text = "Zeitspanne (min):";
             // 
             // ClientForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(816, 448);
+            this.ClientSize = new System.Drawing.Size(725, 358);
             this.Controls.Add(this.lblzeitspanne);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.lbldiatitle);
             this.Controls.Add(this.pbdiagram);
             this.Controls.Add(this.lblscore);
             this.Controls.Add(this.tbscore);
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ClientForm";
             this.Text = "Statistik";
             ((System.ComponentModel.ISupportInitialize)(this.tbscore)).EndInit();
